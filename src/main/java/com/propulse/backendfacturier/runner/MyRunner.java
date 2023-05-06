@@ -3,7 +3,6 @@ package com.propulse.backendfacturier.runner;
 import com.propulse.backendfacturier.entity.*;
 import com.propulse.backendfacturier.service.*;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
@@ -18,26 +17,33 @@ public class MyRunner implements CommandLineRunner {
     private UserService userService;
     private RoleService roleService;
     private FeeService feeService;
-
+    private OperatorService operatorService;
     private CountryService countryService;
+    private MessageService messageService;
 
-
-    public MyRunner(CityService cityService, UserService userService, RoleService roleService, FeeService feeService, CountryService countryService) {
+    public MyRunner(CityService cityService, UserService userService, RoleService roleService, FeeService feeService, OperatorService operatorService, CountryService countryService, MessageService messageService) {
         this.cityService = cityService;
         this.userService = userService;
         this.roleService = roleService;
         this.feeService = feeService;
+        this.operatorService = operatorService;
         this.countryService = countryService;
+        this.messageService = messageService;
     }
 
     @Override
     public void run(String... args) throws Exception {
+        createOperatorCIE();
+        createOperatorSODECI();
+        createOperatorCANAL();
         createRole();
         createCountry();
         createCity();
         createFeeOne();
         createFeeFour();
         createsUser();
+        createSendMessage();
+        createReceiptMessage();
     }
 
     private void createCountry(){
@@ -69,12 +75,13 @@ public class MyRunner implements CommandLineRunner {
     }
 
     private void createFeeOne() throws ParseException {
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 1; i++) {
+            Operator operator= new Operator(1L);
             Fee fee = new Fee();
-            fee.setDescription("Facture d'éléctricité");
-            fee.setNameEnterprise("Compagnie Ivoirienne d'électricité");
             fee.setPrice(35000);
             fee.setPhone("0723546741");
+            fee.setFeeId("01034576899876"+i);
+            fee.setOperator(operator);
             Date periodFee = new SimpleDateFormat("dd-MM-yyyy").parse("18-04-2023");
             fee.setPeriodFee(periodFee);
             Date limitDate = new SimpleDateFormat("dd-MM-yyyy").parse("03-05-2023");
@@ -84,12 +91,13 @@ public class MyRunner implements CommandLineRunner {
     }
 
     private void createFeeFour() throws ParseException {
-        for (int i = 0; i < 2; i++) {
+        for (int i = 1; i < 2; i++) {
+            Operator operator= new Operator(2L);
             Fee fee = new Fee();
-            fee.setDescription("Abonnement Canal");
-            fee.setNameEnterprise("Canal plus Afrique");
             fee.setPrice(35000);
             fee.setPhone("0723546744");
+            fee.setFeeId("01034576899876"+i);
+            fee.setOperator(operator);
             Date periodFee = new SimpleDateFormat("dd-MM-yyyy").parse("18-04-2023");
             fee.setPeriodFee(periodFee);
             Date limitDate = new SimpleDateFormat("dd-MM-yyyy").parse("03-05-2023");
@@ -101,6 +109,48 @@ public class MyRunner implements CommandLineRunner {
     private void createRole(){
         Arrays.asList("Admin", "User", "Support")
                 .forEach(role -> roleService.addRole(new Role(role)));
+    }
+
+    private void createOperatorCIE(){
+        Operator operator = new Operator();
+        operator.setName("Compagnie Ivoirienne d'électricité");
+        operator.setLabel("CIE");
+        operatorService.addOperator(operator);
+    }
+
+    private void createOperatorSODECI(){
+        Operator operator = new Operator();
+        operator.setName("SODECI");
+        operator.setLabel("SODECI");
+        operatorService.addOperator(operator);
+    }
+
+    private void createOperatorCANAL(){
+        Operator operator = new Operator();
+        operator.setName("CANAL");
+        operator.setLabel("CANAL");
+        operatorService.addOperator(operator);
+    }
+
+    private void createSendMessage(){
+        for (int i = 0; i < 3; i++) {
+            Message message = new Message();
+            message.setSenderEmail("fact"+i+"@gmail.com");
+            message.setReceiptEmail("fact5@gmail.com");
+            message.setMessage("Bonjour"+i);
+            messageService.sendMessage(message);
+
+        }
+    }
+
+    private void createReceiptMessage(){
+        for (int i = 0; i < 3; i++) {
+            Message message = new Message();
+            message.setSenderEmail("fact5@gmail.com");
+            message.setReceiptEmail("fact"+i+"@gmail.com");
+            message.setMessage("Bonjour"+i);
+            messageService.sendMessage(message);
+        }
     }
 
 }

@@ -8,9 +8,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.propulse.backendfacturier.dto.UserDTO;
 import com.propulse.backendfacturier.entity.*;
 import com.propulse.backendfacturier.helper.JWTHelper;
+import com.propulse.backendfacturier.repository.UserRepository;
 import com.propulse.backendfacturier.service.FeeService;
+import com.propulse.backendfacturier.service.MessageService;
 import com.propulse.backendfacturier.service.UserService;
-import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,18 +34,54 @@ public class UserController {
 
     private UserService userService;
     private FeeService feeService;
+    private MessageService messageService;
     private JWTHelper jwtHelper;
+    private UserRepository userRepository;
 
-    public UserController(UserService userService, FeeService feeService, JWTHelper jwtHelper) {
+    public UserController(UserService userService, FeeService feeService, MessageService messageService, JWTHelper jwtHelper, UserRepository userRepository) {
         this.userService = userService;
         this.feeService = feeService;
+        this.messageService = messageService;
         this.jwtHelper = jwtHelper;
+        this.userRepository = userRepository;
     }
 
     @PostMapping("/add")
     public User addUser(@RequestBody UserDTO userDTO){
         User user = convertDtoToEntity(userDTO);
         return userService.addUser(user);
+    }
+    /*
+    @GetMapping("/getAllUsers")
+    public List<String> getAllUsers(){
+        return userService.getAllUsers();
+    }
+     */
+    @GetMapping("/getAllUsers")
+    public List<Map<String, Object>> getAllUsers() {
+        List<String> users = userRepository.findAllUser();
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        for (String user : users) {
+            String[] values = user.split(",");
+            Map<String, Object> map = new HashMap<>();
+            map.put("email", values[0]);
+            map.put("lastname", values[1]);
+            map.put("firstname", values[2]);
+            result.add(map);
+        }
+
+        return result;
+    }
+
+    @PostMapping("/sendMessage")
+    public Message sendMessage(@RequestBody Message sendMessage){
+        return messageService.sendMessage(sendMessage);
+    }
+    @GetMapping("/messages")
+    public List<Message> findSenderAndReceiptEmails(@RequestParam(name = "sender", defaultValue = "")String sender,
+                                                    @RequestParam(name = "receipt", defaultValue = "")String receipt){
+        return messageService.findSenderAndReceiptEmails(sender, receipt);
     }
 
     private User convertDtoToEntity(UserDTO userDTO){
@@ -68,7 +105,7 @@ public class UserController {
     public Map<String, Object> findFeeByPhone(@RequestParam(name = "phone", defaultValue = "")String phone) {
         Map<String, Object> map = new HashMap<>();
         User user = userService.getUserByPhone(phone);
-        List<Fee> fees = feeService.findFeeByPhone(phone);
+        List<Fee> fees = feeService.findFeeByPhoneAndFeeStatus(phone);
         List<Fee> array = new ArrayList<>();
         if(user==null){
             map.put("factures", array);
@@ -76,11 +113,40 @@ public class UserController {
             if(fees.isEmpty()){
                 map.put("factures", array);
             } else {
-                map.put("factures", fees);
+                List<Map<String, Object>> feeList = new ArrayList<>();
+                for(Fee fee : fees){
+                    Map<String, Object> feeMap = new HashMap<>();
+                    feeMap.put("operator", fee.getOperator());
+                    feeList.add(feeMap);
+                }
+                map.put("factures", feeList);
             }
         }
         return map;
-
+    }
+    @PreAuthorize("hasAuthority('User')")
+    @GetMapping("/fees/true")
+    public Map<String, Object> findFeeByPhoneTrue(@RequestParam(name = "phone", defaultValue = "")String phone) {
+        Map<String, Object> map = new HashMap<>();
+        User user = userService.getUserByPhone(phone);
+        List<Fee> fees = feeService.findFeeByPhoneAndFeeStatusTrue(phone);
+        List<Fee> array = new ArrayList<>();
+        if(user==null){
+            map.put("factures", array);
+        } else {
+            if(fees.isEmpty()){
+                map.put("factures", array);
+            } else {
+                List<Map<String, Object>> feeList = new ArrayList<>();
+                for(Fee fee : fees){
+                    Map<String, Object> feeMap = new HashMap<>();
+                    feeMap.put("operator", fee.getOperator());
+                    feeList.add(feeMap);
+                }
+                map.put("factures", feeList);
+            }
+        }
+        return map;
     }
 
     @GetMapping("/users")

@@ -34,7 +34,7 @@ public class SecurityConfiguration {
         http.cors().and().csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().antMatchers("/refresh-token/**","/city/all",
-        "/country/all", "/user/add", "/user/find").permitAll();
+        "/country/all", "/user/add", "/user/find", "user/getAllUsers").permitAll();
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(new JWTAuthenticationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)), jwtHelper));
         http.addFilterBefore(new JWTAuthorizationFilter(jwtHelper), UsernamePasswordAuthenticationFilter.class);

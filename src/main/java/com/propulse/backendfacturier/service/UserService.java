@@ -1,6 +1,7 @@
 package com.propulse.backendfacturier.service;
 
 import com.propulse.backendfacturier.entity.Fee;
+import com.propulse.backendfacturier.entity.Message;
 import com.propulse.backendfacturier.entity.Role;
 import com.propulse.backendfacturier.entity.User;
 import com.propulse.backendfacturier.repository.UserRepository;
@@ -13,6 +14,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Service
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,6 +28,8 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private MessageService messageService;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -41,6 +49,10 @@ public class UserService {
 
     public User getUserByPhone(@RequestParam(name = "phone", defaultValue = "")String phone){
         return userRepository.findUserByPhone(phone);
+    }
+
+    public List<String> getAllUsers(){
+        return userRepository.findAllUser();
     }
 
     public User getOneUser(@PathVariable Long id){
