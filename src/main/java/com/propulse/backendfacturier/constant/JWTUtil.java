@@ -2,7 +2,7 @@ package com.propulse.backendfacturier.constant;
 
 public class JWTUtil {
 
-    public static final long EXPIRE_ACCESS_TOKEN = 5*60*1000;
+    public static final long EXPIRE_ACCESS_TOKEN = 1440*60*1000;
 
     public static final long EXPIRE_REFRESH_TOKEN = 120*60*1000;
 

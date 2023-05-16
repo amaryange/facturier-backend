@@ -24,6 +24,8 @@ public class Operator {
     private String name;
     @JsonProperty
     private String label;
+    @JsonProperty
+    private String picture;
     @OneToMany(mappedBy = "operator")
     @JsonManagedReference
     private Collection<Fee> fee;

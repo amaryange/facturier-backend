@@ -51,6 +51,12 @@ public class UserController {
         User user = convertDtoToEntity(userDTO);
         return userService.addUser(user);
     }
+
+    @PostMapping("/add-support")
+    public User addSupport(@RequestBody UserDTO userDTO){
+        User user = convertDtoToEntity(userDTO);
+        return userService.addSupport(user);
+    }
     /*
     @GetMapping("/getAllUsers")
     public List<String> getAllUsers(){
@@ -68,6 +74,24 @@ public class UserController {
             map.put("email", values[0]);
             map.put("lastname", values[1]);
             map.put("firstname", values[2]);
+            result.add(map);
+        }
+
+        return result;
+    }
+
+    @GetMapping("/getAllUserSupport")
+    public List<Map<String, Object>> findAllUserSupport() {
+        List<String> supports = userRepository.findAllUserSupport();
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        for (String support : supports) {
+            String[] values = support.split(",");
+            Map<String, Object> map = new HashMap<>();
+            map.put("email", values[0]);
+            map.put("lastname", values[1]);
+            map.put("firstname", values[2]);
+            map.put("role", values[3]);
             result.add(map);
         }
 

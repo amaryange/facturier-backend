@@ -42,6 +42,14 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public User addSupport(@RequestBody User user){
+        Role role = roleService.getOneRole(3L);
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+        addRoleToUser(user, role);
+        return userRepository.save(user);
+    }
+
     public void addRoleToUser(User user, Role role) {
         user.getRoles().add(role);
         role.getUsers().add(user);
@@ -53,6 +61,10 @@ public class UserService {
 
     public List<String> getAllUsers(){
         return userRepository.findAllUser();
+    }
+
+    public List<String> findAllUserSupport(){
+        return userRepository.findAllUserSupport();
     }
 
     public User getOneUser(@PathVariable Long id){

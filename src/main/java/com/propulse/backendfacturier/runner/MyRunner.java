@@ -1,14 +1,22 @@
 package com.propulse.backendfacturier.runner;
 
+import com.propulse.backendfacturier.dto.OperatorDTO;
 import com.propulse.backendfacturier.entity.*;
+import com.propulse.backendfacturier.repository.OperatorRepository;
 import com.propulse.backendfacturier.service.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 @Component
 public class MyRunner implements CommandLineRunner {
@@ -20,8 +28,9 @@ public class MyRunner implements CommandLineRunner {
     private OperatorService operatorService;
     private CountryService countryService;
     private MessageService messageService;
+    private OperatorRepository operatorRepository;
 
-    public MyRunner(CityService cityService, UserService userService, RoleService roleService, FeeService feeService, OperatorService operatorService, CountryService countryService, MessageService messageService) {
+    public MyRunner(CityService cityService, UserService userService, RoleService roleService, FeeService feeService, OperatorService operatorService, CountryService countryService, MessageService messageService, OperatorRepository operatorRepository) {
         this.cityService = cityService;
         this.userService = userService;
         this.roleService = roleService;
@@ -29,19 +38,22 @@ public class MyRunner implements CommandLineRunner {
         this.operatorService = operatorService;
         this.countryService = countryService;
         this.messageService = messageService;
+        this.operatorRepository = operatorRepository;
     }
 
     @Override
     public void run(String... args) throws Exception {
-        createOperatorCIE();
-        createOperatorSODECI();
-        createOperatorCANAL();
+        //createOperatorCIE();
+        //createOperatorSODECI();
+        //createOperatorCANAL();
+        createOperatorWithImage();
         createRole();
         createCountry();
         createCity();
         createFeeOne();
         createFeeFour();
         createsUser();
+        createsSupport();
         createSendMessage();
         createReceiptMessage();
     }
@@ -71,6 +83,24 @@ public class MyRunner implements CommandLineRunner {
             user.setCity(city);
             user.setCountry(country);
             userService.addUser(user);
+        }
+    }
+
+    private void createsSupport(){
+        for (int i = 0; i < 3; i++) {
+            City city = cityService.getOneCity(1L);
+            Country country = countryService.getOneCountry(1L);
+            User user = new User();
+            user.setFirstname("factSupport"+i+"FN");
+            user.setLastname("factSupport"+i+"LN");
+            user.setEmail("factsupport"+i+"@gmail.com");
+            user.setPhone("072354679"+i);
+            user.setStreet("street"+i);
+            user.setIndex("225");
+            user.setPassword("1234");
+            user.setCity(city);
+            user.setCountry(country);
+            userService.addSupport(user);
         }
     }
 
@@ -136,21 +166,52 @@ public class MyRunner implements CommandLineRunner {
         for (int i = 0; i < 3; i++) {
             Message message = new Message();
             message.setSenderEmail("fact"+i+"@gmail.com");
-            message.setReceiptEmail("fact5@gmail.com");
+            message.setReceiptEmail("factSupport0LN@gmail.com");
             message.setMessage("Bonjour"+i);
             messageService.sendMessage(message);
-
         }
     }
 
     private void createReceiptMessage(){
         for (int i = 0; i < 3; i++) {
             Message message = new Message();
-            message.setSenderEmail("fact5@gmail.com");
+            message.setSenderEmail("factSupport0LN@gmail.com");
             message.setReceiptEmail("fact"+i+"@gmail.com");
             message.setMessage("Bonjour"+i);
             messageService.sendMessage(message);
         }
+    }
+
+    private void createOperatorWithImage(){
+
+        List<OperatorDTO> operators = new ArrayList<>();
+
+        // Ajouter les informations des opérateurs avec leurs images correspondantes
+        operators.add(new OperatorDTO("cie.png", "Compagnie Ivoirienne d'électricité", "CIE"));
+        operators.add(new OperatorDTO("sodeci.png", "Société de distribution d'eau en Côte d'Ivoire", "SODECI"));
+        operators.add(new OperatorDTO("canal.png", "CANAL", "CANAL+"));
+        operators.add(new OperatorDTO("startimes.png", "STARTIMES", "STARTIMES"));
+        operators.add(new OperatorDTO("orange.png", "Orange", "Orange"));
+
+        for (OperatorDTO operatorDTO : operators) {
+            String imagePath = "uploads/" + operatorDTO.getImageFileName();
+
+            try {
+                byte[] imageBytes = Files.readAllBytes(Paths.get(imagePath));
+
+                Operator operator = new Operator();
+                operator.setName(operatorDTO.getName());
+                operator.setLabel(operatorDTO.getLabel());
+                operator.setPicture(StringUtils.getFilename(imagePath));
+
+                operatorRepository.save(operator);
+
+                System.out.println("Opérateur " + operatorDTO.getName() + " créé avec succès !");
+            } catch (IOException e) {
+                System.out.println("Erreur lors de la création de l'opérateur " + operatorDTO.getName() + " : " + e.getMessage());
+            }
+        }
+
     }
 
 }
