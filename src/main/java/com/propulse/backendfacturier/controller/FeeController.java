@@ -22,6 +22,7 @@ public class FeeController {
         return feeService.findFeeByPhone(phone);
     }
 
+
     @GetMapping("/allFee?phone=")
     public List<Fee> findFeeByPhoneAndFeeStatus(@RequestParam(name = "phone", defaultValue = "")String phone){
         return feeService.findFeeByPhone(phone);
