@@ -63,6 +63,17 @@ public class UserController {
         return userService.getAllUsers();
     }
      */
+
+    @PreAuthorize("hasAuthority('User')")
+    @PostMapping("/update/{id}")
+    public User updateUser(@PathVariable Long id,@RequestParam("lastname") String lastname,
+                           @RequestParam("firstname") String firstname,
+                           @RequestParam("index") String index,
+                           @RequestParam("phone") String phone,
+                           @RequestParam("email") String email){
+        return userService.updateUser(id, lastname, firstname, index, phone, email);
+    }
+
     @GetMapping("/getAllUsers")
     public List<Map<String, Object>> getAllUsers() {
         List<String> users = userRepository.findAllUser();

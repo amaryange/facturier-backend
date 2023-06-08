@@ -38,6 +38,12 @@ public class FeeController {
     }
      */
 
+    @PreAuthorize("hasAuthority('User')")
+    @GetMapping("/countFeeByPerson/{phone}")
+    public Long countFeePriceByPerson(@PathVariable String phone){
+        return feeService.countFeePriceByPerson(phone);
+    }
+
     @GetMapping("/getFeeByOperator/{feeId}")
     public List<Map<String, Object>> findAllFeeByUser(@PathVariable String feeId) {
         List<String> fees = feeService.findAllFeeByUser(feeId);

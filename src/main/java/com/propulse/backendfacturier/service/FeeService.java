@@ -56,6 +56,10 @@ public class FeeService {
         return feeRepository.count(phone);
     }
 
+    public Long countFeePriceByPerson(@PathVariable String phone){
+        return feeRepository.countFeePriceByPerson(phone);
+    }
+
     public List<String> findAllFeeByUser(@PathVariable String feeId){
         return feeRepository.findAllFeeByUser(feeId);
     }

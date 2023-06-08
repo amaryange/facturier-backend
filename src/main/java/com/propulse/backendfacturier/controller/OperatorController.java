@@ -53,7 +53,7 @@ public class OperatorController {
         return response;
 
     }
-    @PreAuthorize("hasAuthority('User')")
+    //@PreAuthorize("hasAuthority('User')")
     @GetMapping("/get-photo/{operatorId}")
     public void getProfilePhoto(@PathVariable Long operatorId, HttpServletResponse response) throws FileNotFoundException {
 

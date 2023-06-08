@@ -1,5 +1,6 @@
 FROM openjdk:11
-VOLUME /tmp
-ADD target/backend-facturier*.jar /app.jar
-CMD ["java", "-jar", "/app.jar", "--spring.profiles.active=prod"]
+WORKDIR /app
+COPY target/facturier.jar app.jar
+COPY uploads /app/uploads
+CMD ["java", "-jar", "app.jar", "--spring.profiles.active=prod"]
 EXPOSE 8082

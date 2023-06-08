@@ -14,10 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -48,6 +45,28 @@ public class UserService {
         user.setPassword(encodedPassword);
         addRoleToUser(user, role);
         return userRepository.save(user);
+    }
+
+    public User updateUser(@PathVariable Long id,@RequestBody String lastname,
+                          @RequestBody String firstname,
+                          @RequestBody String index,
+                          @RequestBody String phone,
+                          @RequestBody String email
+                          ){
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isPresent()) {
+            User existingUser = optionalUser.get();
+            existingUser.setEmail(email);
+            existingUser.setLastname(lastname);
+            existingUser.setFirstname(firstname);
+            existingUser.setIndex(index);
+            existingUser.setPhone(phone);
+            // mettez à jour tous les autres champs que vous souhaitez modifier
+            User savedFee = userRepository.save(existingUser);
+            return savedFee;
+        } else {
+            return null;
+        }
     }
 
     public void addRoleToUser(User user, Role role) {

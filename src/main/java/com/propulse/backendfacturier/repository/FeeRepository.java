@@ -15,6 +15,12 @@ public interface FeeRepository extends JpaRepository<Fee, Long> {
     List<Fee> findFeeByPhoneAndFeeStatusTrue(String phone);
     @Query(value = "SELECT COUNT(*) FROM fee f WHERE f.phone = :phone", nativeQuery = true)
     long count(String phone);
+
+    @Query(value = "SELECT COALESCE(SUM(f.price), 0) AS somme_factures " +
+            "FROM fee f " +
+            "WHERE f.phone = :phone AND f.fee_status = TRUE", nativeQuery = true)
+    Long countFeePriceByPerson(String phone);
+
     @Query(value = "SELECT f.*, o.label, o.name " +
             "FROM fee f, operator o " +
             "WHERE f.fee_status = false AND f.fee_id = :feeId AND o.id = f.id", nativeQuery = true)
