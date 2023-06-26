@@ -66,13 +66,10 @@ public class UserService {
 
     public void sendEmail(String to, String subject, String content) {
 
-        String password = generatePassword();
-        String emailContent = content + "\n\nVotre mot de passe : " + password;
-
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("meless@amary.dev");
         message.setTo(to);
-        message.setText(emailContent);
+        message.setText(content);
         message.setSubject(subject);
 
         mailSender.send(message);
@@ -91,8 +88,12 @@ public class UserService {
     //Envoyez un mail aux administrateur et support créer
     public User addSupportAndBiller(@RequestBody User user, @RequestParam("roleId") Long roleId)  {
         Role role = roleService.getOneRole(roleId);
-        String encodedPassword = passwordEncoder.encode(generatePassword());
+        String password = generatePassword();
+        String encodedPassword = passwordEncoder.encode(password);
         user.setPassword(encodedPassword);
+        String userName = user.getLastname();
+        String userEmail = user.getEmail();
+        sendEmail(userEmail, "Mot de passe mesfactures.ci", "Bonjour " + userName + ", voici votre mot de passe : "+password);
         addRoleToUser(user, role);
         return userRepository.save(user);
     }
