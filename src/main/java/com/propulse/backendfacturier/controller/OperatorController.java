@@ -79,4 +79,14 @@ public class OperatorController {
 
     }
 
+    @GetMapping("/numberOfOperatorInCurrentYear")
+    public Long numberOfOperatorInCurrentYear(){
+        return operatorService.numberOfOperatorInCurrentYear();
+    }
+
+    @GetMapping("/numberOfOperatorForOneYear")
+    public Long numberOfOperatorForOneYear(@RequestParam("year") int year){
+        return operatorService.numberOfOperatorForOneYear(year);
+    }
+
 }

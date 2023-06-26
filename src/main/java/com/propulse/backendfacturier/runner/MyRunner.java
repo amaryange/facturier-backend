@@ -8,6 +8,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import javax.mail.MessagingException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -86,21 +87,22 @@ public class MyRunner implements CommandLineRunner {
         }
     }
 
-    private void createsSupport(){
-        for (int i = 0; i < 3; i++) {
+    private void createsSupport() throws MessagingException {
+        for (int i = 0; i < 1; i++) {
             City city = cityService.getOneCity(1L);
             Country country = countryService.getOneCountry(1L);
             User user = new User();
             user.setFirstname("factSupport"+i+"FN");
             user.setLastname("factSupport"+i+"LN");
-            user.setEmail("factsupport"+i+"@gmail.com");
+            //user.setEmail("factsupport"+i+"@gmail.com");
+            user.setEmail("melessangekevin@gmail.com");
             user.setPhone("072354679"+i);
             user.setStreet("street"+i);
             user.setIndex("225");
             user.setPassword("1234");
             user.setCity(city);
             user.setCountry(country);
-            userService.addSupport(user);
+            userService.addSupportAndBiller(user, 3L);
         }
     }
 
@@ -137,7 +139,7 @@ public class MyRunner implements CommandLineRunner {
     }
 
     private void createRole(){
-        Arrays.asList("Admin", "User", "Support")
+        Arrays.asList("Admin", "User", "Support", "CIE", "SODECI")
                 .forEach(role -> roleService.addRole(new Role(role)));
     }
 

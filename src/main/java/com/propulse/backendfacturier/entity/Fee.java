@@ -30,6 +30,9 @@ public class Fee {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private Date limitDate;
     @JsonProperty
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
+    private Date paymentDate;
+    @JsonProperty
     private boolean feeStatus = false;
     @JsonProperty
     private String debtor;

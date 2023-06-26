@@ -75,4 +75,12 @@ public class OperatorService {
         return operatorRepository.findAll();
     }
 
+    public Long numberOfOperatorInCurrentYear(){
+        return operatorRepository.numberOfOperatorInCurrentYear();
+    }
+
+    public Long numberOfOperatorForOneYear(int year){
+        return operatorRepository.numberOfOperatorForOneYear(year);
+    }
+
 }

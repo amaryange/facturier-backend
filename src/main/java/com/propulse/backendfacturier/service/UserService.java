@@ -8,12 +8,17 @@ import com.propulse.backendfacturier.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import java.util.*;
 
 @Service
@@ -29,7 +34,51 @@ public class UserService {
     private MessageService messageService;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private JavaMailSender mailSender;
 
+
+    // Caractères autorisés pour le mot de passe
+    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789#@*/";
+
+    // Longueur par défaut du mot de passe
+    private static final int DEFAULT_PASSWORD_LENGTH = 8;
+
+
+
+    public static String generatePassword(int length) {
+        StringBuilder password = new StringBuilder();
+        Random random = new Random();
+
+        for (int i = 0; i < length; i++) {
+            int randomIndex = random.nextInt(CHARACTERS.length());
+            char randomChar = CHARACTERS.charAt(randomIndex);
+            password.append(randomChar);
+        }
+
+        return password.toString();
+    }
+
+    // fonction permettant de générer un mot de passe aléatoire
+    public static String generatePassword() {
+        return generatePassword(DEFAULT_PASSWORD_LENGTH);
+    }
+
+    public void sendEmail(String to, String subject, String content) {
+
+        String password = generatePassword();
+        String emailContent = content + "\n\nVotre mot de passe : " + password;
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("meless@amary.dev");
+        message.setTo(to);
+        message.setText(emailContent);
+        message.setSubject(subject);
+
+        mailSender.send(message);
+
+        System.out.println("Mail envoyé.");
+    }
 
     public User addUser(@RequestBody User user){
         Role role = roleService.getOneRole(2L);
@@ -39,9 +88,10 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User addSupport(@RequestBody User user){
-        Role role = roleService.getOneRole(3L);
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
+    //Envoyez un mail aux administrateur et support créer
+    public User addSupportAndBiller(@RequestBody User user, @RequestParam("roleId") Long roleId)  {
+        Role role = roleService.getOneRole(roleId);
+        String encodedPassword = passwordEncoder.encode(generatePassword());
         user.setPassword(encodedPassword);
         addRoleToUser(user, role);
         return userRepository.save(user);
@@ -91,5 +141,13 @@ public class UserService {
     }
 
     public User loadUserByEmail(String email){ return userRepository.findUserByEmail(email); }
+
+    public List<String> listOfActivedUser(){
+        return userRepository.listOfActivedUser();
+    }
+
+    public List<String> listOfUsersOperator(){
+        return userRepository.listOfUsersOperator();
+    }
 
 }

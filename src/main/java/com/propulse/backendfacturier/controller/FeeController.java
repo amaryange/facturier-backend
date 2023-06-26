@@ -5,6 +5,7 @@ import com.propulse.backendfacturier.entity.Operator;
 import com.propulse.backendfacturier.service.FeeService;
 import com.propulse.backendfacturier.service.OperatorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -80,4 +81,117 @@ public class FeeController {
     public List<Fee> findFeeByDebtor(@PathVariable String debtor){
         return feeService.findFeeByDebtor(debtor);
     }
+
+    @GetMapping("/countFeeForCurrentMonth/{phone}")
+    public Long countFeeForCurrentMonthByPerson(@PathVariable String phone){
+        return feeService.countFeeForCurrentMonthByPerson(phone);
+    }
+
+    @GetMapping("/countFeeByCurrentDateAndThreeLastMonth/{phone}")
+    public List<Fee> getFeesByCurrentDate(@PathVariable String phone){
+        return feeService.getFeesByCurrentDate(phone);
+    }
+
+    @GetMapping("/getTotalFeeAmountForCurrentMonth")
+    public Long getTotalFeeAmountForCurrentMonth(@RequestParam("role") String role){
+        return feeService.getTotalFeeAmountForCurrentMonth(role);
+    }
+
+    @GetMapping("/getTotalFeeAmountForMonthAndYear")
+    public Long getTotalFeeAmountForMonthAndYear(@RequestParam("month") int month, @RequestParam("year") int year, @RequestParam("role") String role){
+        return feeService.getTotalFeeAmountForMonthAndYear(month, year, role);
+    }
+
+    @GetMapping("/getNumberOfInvoicesForCurrentMonth")
+    public Long getNumberOfInvoicesForCurrentMonth(@RequestParam("role") String role){
+        return feeService.getNumberOfInvoicesForCurrentMonth(role);
+    }
+
+    @GetMapping("/getNumberOfInvoicesForMonthAndYear")
+    public Long getNumberOfInvoicesForMonthAndYear(@RequestParam("month") int month, @RequestParam("year") int year, @RequestParam("role") String role){
+        return feeService.getNumberOfInvoicesForMonthAndYear(month, year, role);
+    }
+
+    @GetMapping("/getAllFeeByOperator")
+    public List<Map<String, Object>>getAllFeeByOperator(@RequestParam("role") String role){
+        List<String> fees = feeService.getAllFeeByOperator(role);
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        for (String fee : fees) {
+            String[] values = fee.split(",");
+            Map<String, Object> map = new HashMap<>();
+            map.put("feeId", values[0]);
+            map.put("paymentDate", values[1]);
+            map.put("periodFee", values[2]);
+            map.put("price", values[3]);
+            map.put("phone", values[4]);
+            result.add(map);
+        }
+
+        return result;
+    }
+
+    @GetMapping("/searchByFeeIdOrPaymentDate")
+    public List<Fee>searchByFeeIdOrPaymentDate(@RequestParam(value = "feeId", defaultValue = "") String feeId, @RequestParam(value = "date", defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") Date paymentDate){
+        return feeService.searchByFeeIdOrPaymentDate(feeId, paymentDate);
+    }
+
+    @GetMapping("/numberOfFeeBuyThisYear")
+    public Long numberOfFeeBuyThisYear(){
+        return feeService.numberOfFeeBuyThisYear();
+    }
+
+    @GetMapping("/numberOfFeeBuyPerYear")
+    public Long numberOfFeeBuyPerYear(@RequestParam("year") int year){
+        return feeService.numberOfFeeBuyPerYear(year);
+    }
+
+    @GetMapping("/sumOfFeeBuyPerYear")
+    public Long sumOfFeeBuyPerYear(@RequestParam("year") int year) {
+        return feeService.sumOfFeeBuyPerYear(year);
+    }
+
+    @GetMapping("/listOfFeeAvailable")
+    public List<Fee> listOfFeeAvailable(){
+        return feeService.listOfFeeAvailable();
+    }
+
+    @GetMapping("/findUsersWithUnpaidFees")
+    public List<Map<String, Object>> findUsersWithUnpaidFees(){
+
+        List<String> fees = feeService.findUsersWithUnpaidFees();
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        for (String fee : fees) {
+            String[] values = fee.split(",");
+            Map<String, Object> map = new HashMap<>();
+            map.put("feeID", values[0]);
+            map.put("price", values[1]);
+            map.put("limitDate", values[2]);
+            map.put("lastname", values[3]);
+            map.put("firstname", values[4]);
+            map.put("email", values[5]);
+            map.put("phone", values[6]);
+            result.add(map);
+        }
+
+        return result;
+
+    }
+
+    @GetMapping("/findFeeGeneratedThisCurrentYear")
+    public Long findFeeGeneratedThisCurrentYear(){
+        return feeService.findFeeGeneratedThisCurrentYear();
+    }
+
+    @GetMapping("/listOfFeeUnPaidPerMonth")
+    public Long listOfFeeUnPaidPerMonth(){
+        return feeService.listOfFeeUnPaidPerMonth();
+    }
+
+    @GetMapping("/listOfFeePaidPerMonth")
+    public Long listOfFeePaidPerMonth(){
+        return feeService.listOfFeePaidPerMonth();
+    }
+
 }

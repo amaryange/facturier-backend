@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -34,7 +35,12 @@ public class User {
     @Column(name = "email", nullable = false, length = 100, unique = true)
     private String email;
     @JsonProperty
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    private Date dateAddedUser;
+    @JsonProperty
     private String password;
+    @JsonProperty
+    private boolean active = true;
     @ManyToOne
     @JsonBackReference
     private City city;
@@ -43,5 +49,11 @@ public class User {
     private Country country;
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Role> roles = new ArrayList<>();
+
+    @PrePersist
+    public void prePersist() {
+        dateAddedUser = new Date();
+    }
+
 
 }

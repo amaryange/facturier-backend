@@ -1,15 +1,13 @@
 package com.propulse.backendfacturier.entity;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -26,6 +24,9 @@ public class Operator {
     private String label;
     @JsonProperty
     private String picture;
+    @JsonProperty
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    private Date dateAdded;
     @OneToMany(mappedBy = "operator")
     @JsonManagedReference
     private Collection<Fee> fee;
@@ -37,6 +38,11 @@ public class Operator {
 
     public Operator(Long id){
         this.id = id;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        dateAdded = new Date();
     }
 
 }

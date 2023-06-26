@@ -15,6 +15,7 @@ import com.propulse.backendfacturier.service.UserService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -52,10 +53,16 @@ public class UserController {
         return userService.addUser(user);
     }
 
-    @PostMapping("/add-support")
-    public User addSupport(@RequestBody UserDTO userDTO){
+    @PostMapping("/add-support-or-biller")
+    public User addSupportAndBiller(@RequestBody UserDTO userDTO, @RequestParam("roleId") Long roleId) throws MessagingException {
         User user = convertDtoToEntity(userDTO);
-        return userService.addSupport(user);
+        String userEmail = user.getEmail();
+        String userName = user.getLastname();
+
+        // Appel à la méthode sendEmail avec les arguments appropriés
+        userService.sendEmail(userEmail, "Mot de passe mesfactures.ci","Bonjour " + userName + ", voici votre mot de passe :");
+
+        return userService.addSupportAndBiller(user, roleId);
     }
     /*
     @GetMapping("/getAllUsers")
@@ -193,6 +200,46 @@ public class UserController {
     @GetMapping("/find")
     public User loadInstructorByEmail(@RequestParam(name = "email", defaultValue = "") String email) {
         return userService.loadUserByEmail(email);
+    }
+
+    @GetMapping("/listOfActivedUser")
+    public List<Map<String, Object>> listOfActivedUser(){
+
+        List<String> users = userService.listOfActivedUser();
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        for (String user : users) {
+            String[] values = user.split(",");
+            Map<String, Object> map = new HashMap<>();
+            map.put("lastname", values[0]);
+            map.put("firstname", values[1]);
+            map.put("email", values[2]);
+            map.put("active", values[3]);
+            map.put("dateAddedUser", values[4]);
+            result.add(map);
+        }
+
+        return result;
+
+    }
+    @GetMapping("/listOfUsersOperator")
+    public List<Map<String, Object>> listOfUsersOperator(){
+
+        List<String> users = userService.listOfUsersOperator();
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        for (String user : users) {
+            String[] values = user.split(",");
+            Map<String, Object> map = new HashMap<>();
+            map.put("email", values[0]);
+            map.put("lastname", values[1]);
+            map.put("firstname", values[2]);
+            map.put("role", values[3]);
+            result.add(map);
+        }
+
+        return result;
+
     }
 
     @GetMapping("/refresh-token")
