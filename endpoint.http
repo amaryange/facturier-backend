@@ -1,0 +1,166 @@
+### conectez un utilisateur
+POST http://localhost:8082/login
+Content-Type: application/x-www-form-urlencoded
+
+username=fact1@gmail.com&password=1234
+
+### Obtenir les infos de lutilisateur connecté
+GET http://localhost:8082/user/find?email=fact1@gmail.com
+
+### Ajoutez un utlisateur
+POST http://localhost:8082/user/add
+Content-Type: application/json
+
+{
+  "firstname": "meless",
+  "lastname": "meless",
+  "email": "meless@mail.com",
+  "phone": "0707359590",
+  "country": 1,
+  "city": 1,
+  "street": "azito",
+  "password":"1234567890"
+}
+
+### mis à jour des informations d'utilisateur
+POST http://localhost:8082/user/update/1
+Content-Type: application/x-www-form-urlencoded
+
+firstname=meless&lastname=meless&email=meless@mail.com&phone=0707359590&index=224
+
+### liste des utilisateurs actifs
+GET http://localhost:8082/user/listOfActivedUser
+
+### Obtenir la liste de tous les utilisateurs
+GET http://localhost:8082/user/getAllUsers
+
+### Obtenir tous les utilisateurs avec le rôle support
+GET http://localhost:8082/user/getAllUserSupport
+
+### Obtenir la liste des utilisateurs qui ont payées leur factures
+GET http://localhost:8082/user/fees/true?phone=0723546744
+
+### Ajoutez une ville
+POST http://localhost:8082/city/add
+Content-Type: application/json
+
+{
+    "name":"Bingue"
+}
+
+### Obtenir tous les pays
+GET http://localhost:8082/city/all
+
+### Obtenir toutes les villes
+GET http://localhost:8082/city/all
+
+### Ajoutez un pays
+POST http://localhost:8082/country/add
+Content-Type: application/json
+
+{
+    "name":"Angola"
+}
+
+### Obtenir toutes les factures d'un utilisateur grâce à son numéro de téléphone
+GET http://localhost:8082/user/fees?phone=0723546744
+
+### Obtenir le nombre de factures par utilisateur
+GET http://localhost:8082/fee/countAllFeeBy/0723546741
+
+### Nombre de factures payées sur l'année en cours
+GET http://localhost:8082/fee/numberOfFeeBuyThisYear
+
+### Nombre de factures payées sur l'année au choix
+GET http://localhost:8082/fee/numberOfFeeBuyPerYear?year=2021
+
+### Somme des factures payées sur une année choisi
+GET http://localhost:8082/fee/sumOfFeeBuyPerYear?year=2021
+
+### liste des factures disponible
+GET http://localhost:8082/fee/listOfFeeAvailable
+
+### liste des utilisateurs qui n'ont pas encore payés leur factures.
+GET http://localhost:8082/fee/findUsersWithUnpaidFees
+
+### Obtenir la liste des factures par numéro d'identifiant de factures
+GET http://localhost:8082/fee/findAllFeeByUser/010345768998760
+
+### mise à jour de la facture si elle payée (true si oui, false si non)
+### Tu peux mettre "fact1@gmail.com" dans un objet et l'envoyé à la validation
+POST http://localhost:8082/fee/update/1/fact1@gmail.com
+Content-Type: application/json
+
+{
+  "debtor": "fact1@gmail.com"
+}
+
+### LIste des factures impayées par mois
+GET http://localhost:8082/fee/listOfFeeUnPaidPerMonth
+
+### Liste des factures pour les 3 derniers mois.
+GET http://localhost:8082/fee/countFeeByCurrentDateAndThreeLastMonth/0723546741
+
+### nombre de facture pour le mois courant
+GET http://localhost:8082/fee/countFeeForCurrentMonth/0723546741
+
+### Obtenir le nombre de facture par personne à l'aide de son numéro
+GET http://localhost:8082/fee/countFeeByPerson/0723546741
+
+### Rechercher une facture par date ou par l'identifiant de la facture
+GET http://localhost:8082/fee/searchByFeeIdOrPaymentDate?date=2023-04-18
+
+### Obtenir le nombre de factures à l'aide du mois et de l'année d'un operateur
+GET http://localhost:8082/fee/getNumberOfInvoicesForMonthAndYear?month=4&year=2023&role=CIE
+
+### Obtenir le nombre de factures à l'aide du mois et de l'année en cours pour un operateur
+GET http://localhost:8082/fee/getNumberOfInvoicesForCurrentMonth?role=CIE
+
+### Obtenir le montant total des factures d'un opérateur sur une periode au choix
+GET http://localhost:8082/fee/getTotalFeeAmountForMonthAndYear?role=CIE&month=4&year=2023
+
+### Obtenir le montant total des factures d'un opérateur sur la periode en cours
+GET http://localhost:8082/fee/getTotalFeeAmountForCurrentMonth?role=CIE
+
+### Obtenir la liste total des factures payées par mois
+GET http://localhost:8082/fee/listOfFeePaidPerMonth
+
+### Obtenir le nombre total des factures générées pour l'année en cours
+GET http://localhost:8082/fee/findFeeGeneratedThisCurrentYear
+
+### Obtenir tous les messages entre 2 utilisateurs
+GET http://localhost:8082/user/messages?sender=fact5@gmail.com&receipt=fact2@gmail.com
+
+### Envoyez un message à un utilisateur
+POST http://localhost:8082/user/sendMessage
+Content-Type: application/json
+
+{
+  "senderEmail": "fact1@gmail.com",
+  "receiptEmail": "fact5@gmail.com",
+  "message":"blabla"
+}
+
+### ajoutez un operateur
+POST http://localhost:8082/operator/add-new
+Content-Type: application/x-www-form-urlencoded
+
+name=CIE&label=CIE&file=lien_du_chemin_de_l_icone
+
+### Obtenir l'icone de l'operateur grâce à son ID
+GET http://localhost:8082/operator/get-photo/4
+
+### Obtenir toutes les factures par operator
+GET http://localhost:8082/fee/getAllFeeByOperator?role=CIE
+
+### Obtenir le nombre d'operateur enregistrés pour l'année en cours
+GET http://localhost:8082/operator/numberOfOperatorInCurrentYear
+
+### Obtenir le nombre d'operateur enregistrés pour une année choisie
+GET http://localhost:8082/operator/numberOfOperatorForOneYear?year=2023
+
+### Liste des utilsateurs qui sont des operateurs
+GET http://localhost:8082/user/listOfUsersOperator
+
+
+

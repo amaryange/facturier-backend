@@ -46,7 +46,7 @@ public class FeeController {
         return feeService.countFeePriceByPerson(phone);
     }
 
-    @GetMapping("/getFeeByOperator/{feeId}")
+    @GetMapping("/findAllFeeByUser/{feeId}")
     public List<Map<String, Object>> findAllFeeByUser(@PathVariable String feeId) {
         List<String> fees = feeService.findAllFeeByUser(feeId);
         List<Map<String, Object>> result = new ArrayList<>();

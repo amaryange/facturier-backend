@@ -105,11 +105,12 @@ public interface FeeRepository extends JpaRepository<Fee, Long> {
     Long findFeeGeneratedThisCurrentYear();
 
     // Liste des factures non payées par mois
-    @Query("SELECT COUNT(f) FROM Fee f WHERE f.feeStatus = false AND f.limitDate < MONTH(CURRENT_DATE()) ")
+    //@Query("SELECT COUNT(f) FROM Fee f WHERE f.feeStatus = false AND f.limitDate < MONTH(CURRENT_DATE()) ")
+    @Query("SELECT COUNT(f) FROM Fee f WHERE f.feeStatus = false AND MONTH(f.limitDate) = MONTH(CURRENT_DATE) ")
     Long listOfFeeUnPaidPerMonth();
 
     // Liste des factures payées par mois
-    @Query("SELECT COUNT(f) FROM Fee f WHERE f.feeStatus = true AND f.limitDate < MONTH(CURRENT_DATE()) ")
+    @Query("SELECT COUNT(f) FROM Fee f WHERE f.feeStatus = true AND MONTH(f.limitDate) < MONTH(CURRENT_DATE()) ")
     Long listOfFeePaidPerMonth();
 
 

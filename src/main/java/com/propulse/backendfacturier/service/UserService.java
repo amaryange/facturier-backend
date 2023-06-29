@@ -91,9 +91,9 @@ public class UserService {
         String password = generatePassword();
         String encodedPassword = passwordEncoder.encode(password);
         user.setPassword(encodedPassword);
-        String userName = user.getLastname();
-        String userEmail = user.getEmail();
-        sendEmail(userEmail, "Mot de passe mesfactures.ci", "Bonjour " + userName + ", voici votre mot de passe : "+password);
+        //String userName = user.getLastname();
+        //String userEmail = user.getEmail();
+        //sendEmail(userEmail, "Mot de passe mesfactures.ci", "Bonjour " + userName + ", voici votre mot de passe : "+password);
         addRoleToUser(user, role);
         return userRepository.save(user);
     }

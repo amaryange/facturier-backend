@@ -5,10 +5,7 @@ import com.propulse.backendfacturier.entity.Country;
 import com.propulse.backendfacturier.service.CityService;
 import com.propulse.backendfacturier.service.CountryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -18,6 +15,11 @@ import java.util.List;
 public class CountryController {
     @Autowired
     private CountryService countryService;
+    @PostMapping("/add")
+    public Country addCountry(@RequestBody Country country){
+        return countryService.addCountry(country);
+    }
+
 
     @GetMapping("/all")
     public List<Country> getAllCountry(){
