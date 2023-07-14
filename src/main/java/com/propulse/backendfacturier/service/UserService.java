@@ -143,6 +143,8 @@ public class UserService {
 
     public User loadUserByEmail(String email){ return userRepository.findUserByEmail(email); }
 
+    public List<String> getUserInfoByEmail(String email){ return userRepository.getUserInfoByEmail(email); }
+
     public List<String> listOfActivedUser(){
         return userRepository.listOfActivedUser();
     }

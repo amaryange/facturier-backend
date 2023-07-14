@@ -9,6 +9,8 @@ import java.util.List;
 public interface UserRepository extends JpaRepository<User, Long> {
     //Obtenir les infos de l'utilisateur par son email.
     User findUserByEmail(String email);
+    @Query(value = "SELECT u.lastname, u.firstname, u.email, u.phone, u.street, r.name FROM User u JOIN u.roles r WHERE u.email = :email")
+    List<String> getUserInfoByEmail(String email);
 
     User findUserByPhone(String phone);
     @Query(value = "SELECT u.email, u.lastname, u.firstname FROM users u", nativeQuery = true)

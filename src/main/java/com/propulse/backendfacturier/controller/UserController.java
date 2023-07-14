@@ -48,13 +48,16 @@ public class UserController {
     }
 
     @PostMapping("/add")
-    public User addUser(@RequestBody UserDTO userDTO){
+    public Map<String, Object> addUser(@RequestBody UserDTO userDTO){
         User user = convertDtoToEntity(userDTO);
-        return userService.addUser(user);
+        userService.addUser(user);
+        Map<String, Object> map = new HashMap<>();
+        map.put("message", "Utilisateur ajouté avec succès");
+        return map;
     }
 
     @PostMapping("/add-support-or-biller")
-    public User addSupportAndBiller(@RequestBody UserDTO userDTO, @RequestParam("roleId") Long roleId) throws MessagingException {
+    public Map<String, Object> addSupportAndBiller(@RequestBody UserDTO userDTO, @RequestParam("roleId") Long roleId) throws MessagingException {
         User user = convertDtoToEntity(userDTO);
         String userEmail = user.getEmail();
         String userName = user.getLastname();
@@ -62,7 +65,11 @@ public class UserController {
         // Appel à la méthode sendEmail avec les arguments appropriés
         userService.sendEmail(userEmail, "Mot de passe mesfactures.ci","Bonjour " + userName + ", voici votre mot de passe :");
 
-        return userService.addSupportAndBiller(user, roleId);
+        userService.addSupportAndBiller(user, roleId);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("message", "Utilisateur ajouté avec succès");
+        return map;
     }
     /*
     @GetMapping("/getAllUsers")
@@ -221,6 +228,28 @@ public class UserController {
     @GetMapping("/find")
     public User loadInstructorByEmail(@RequestParam(name = "email", defaultValue = "") String email) {
         return userService.loadUserByEmail(email);
+    }
+
+    @GetMapping("/getInfo")
+    public List<Map<String, Object>> getUserInfoByEmail(@RequestParam(name = "email", defaultValue = "") String email) {
+
+        List<String> users = userService.getUserInfoByEmail(email);
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        for (String user : users) {
+            String[] values = user.split(",");
+            Map<String, Object> map = new HashMap<>();
+            map.put("lastname", values[0]);
+            map.put("firstname", values[1]);
+            map.put("email", values[2]);
+            map.put("phone", values[3]);
+            map.put("street", values[4]);
+            map.put("role", values[5]);
+            result.add(map);
+        }
+
+        return result;
+
     }
 
     @GetMapping("/listOfActivedUser")

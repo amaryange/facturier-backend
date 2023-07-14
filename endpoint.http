@@ -11,7 +11,7 @@ Content-Type: application/json
 
 
 ### Obtenir les infos de l'utilisateur connecté
-GET http://localhost:8082/user/find?email=fact1@gmail.com
+GET http://localhost:8082/user/getInfo?email=fact1@gmail.com
 
 ### Ajoutez un utlisateur
 POST http://localhost:8082/user/add
