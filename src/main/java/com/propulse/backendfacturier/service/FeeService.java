@@ -52,8 +52,24 @@ public class FeeService {
         return feeRepository.findFeeByPhoneAndFeeStatus(phone);
     }
 
+    public Long sumFeeByPhoneAndFeeStatus(@RequestParam(name = "phone", defaultValue = "")String phone){
+        return feeRepository.sumFeeByPhoneAndFeeStatus(phone);
+    }
+
     public List<Fee> findFeeByPhoneAndFeeStatusTrue(@RequestParam(name = "phone", defaultValue = "")String phone){
         return feeRepository.findFeeByPhoneAndFeeStatusTrue(phone);
+    }
+
+    public Long numberFeeByPhoneAndFeeStatusTrue(@RequestParam(name = "phone", defaultValue = "")String phone){
+        return feeRepository.numberFeeByPhoneAndFeeStatusTrue(phone);
+    }
+
+    public Long findFeeByPhoneAndFeeStatusTrueCurrentMonth(@RequestParam(name = "phone", defaultValue = "")String phone){
+        return feeRepository.findFeeByPhoneAndFeeStatusTrueCurrentMonth(phone);
+    }
+
+    public Long findFeeByPhoneAndFeeStatusTrueCurrentYear(@RequestParam(name = "phone", defaultValue = "")String phone){
+        return feeRepository.findFeeByPhoneAndFeeStatusTrueCurrentYear(phone);
     }
 
     public Long countAllFeeByPhone(@PathVariable String phone){
@@ -74,6 +90,10 @@ public class FeeService {
 
     public Long countFeeForCurrentMonthByPerson(@PathVariable String phone){
         return feeRepository.countFeeForCurrentMonthByPerson(phone);
+    }
+
+    public Long sumFeeForCurrentMonthByPerson(@PathVariable String phone){
+        return feeRepository.sumFeeForCurrentMonthByPerson(phone);
     }
 
     public List<Fee> getFeesByCurrentDate(@PathVariable String phone){

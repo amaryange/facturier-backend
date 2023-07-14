@@ -166,6 +166,12 @@ public class UserController {
         }
         return map;
     }
+
+    @GetMapping("/fees/outstanding")
+    public Long sumFeeByPhoneAndFeeStatus(@RequestParam(name = "phone", defaultValue = "")String phone) {
+        return feeService.sumFeeByPhoneAndFeeStatus(phone);
+    }
+
     @PreAuthorize("hasAuthority('User')")
     @GetMapping("/fees/true")
     public Map<String, Object> findFeeByPhoneTrue(@RequestParam(name = "phone", defaultValue = "")String phone) {
@@ -189,6 +195,21 @@ public class UserController {
             }
         }
         return map;
+    }
+
+    @GetMapping("/fees/number")
+    public Long numberFeeByPhoneAndFeeStatusTrue(@RequestParam(name = "phone", defaultValue = "")String phone) {
+        return feeService.numberFeeByPhoneAndFeeStatusTrue(phone);
+    }
+
+    @GetMapping("/fees/month")
+    public Long sumFeeByPhoneAndFeeStatusTrueCurrentMonth(@RequestParam(name = "phone", defaultValue = "")String phone) {
+        return feeService.findFeeByPhoneAndFeeStatusTrueCurrentMonth(phone);
+    }
+
+    @GetMapping("/fees/year")
+    public Long sumFeeByPhoneAndFeeStatusTrueCurrentYear(@RequestParam(name = "phone", defaultValue = "")String phone) {
+        return feeService.findFeeByPhoneAndFeeStatusTrueCurrentYear(phone);
     }
 
     @GetMapping("/users")

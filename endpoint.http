@@ -10,8 +10,7 @@ Content-Type: application/json
 }
 
 
-
-### Obtenir les infos de lutilisateur connecté
+### Obtenir les infos de l'utilisateur connecté
 GET http://localhost:8082/user/find?email=fact1@gmail.com
 
 ### Ajoutez un utlisateur
@@ -111,7 +110,7 @@ GET http://localhost:8082/fee/countFeeByCurrentDateAndThreeLastMonth/0723546741
 ### nombre de facture pour le mois courant
 GET http://localhost:8082/fee/countFeeForCurrentMonth/0723546741
 
-### Obtenir le nombre de facture par personne à l'aide de son numéro
+### Obtenir la somme de facture par personne à l'aide de son numéro
 GET http://localhost:8082/fee/countFeeByPerson/0723546741
 
 ### Rechercher une facture par date ou par l'identifiant de la facture

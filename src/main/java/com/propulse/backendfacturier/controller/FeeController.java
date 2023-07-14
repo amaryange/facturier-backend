@@ -87,6 +87,11 @@ public class FeeController {
         return feeService.countFeeForCurrentMonthByPerson(phone);
     }
 
+    @GetMapping("/sumFeeForCurrentMonthByPerson/{phone}")
+    public Long sumFeeForCurrentMonthByPerson(@PathVariable String phone){
+        return feeService.sumFeeForCurrentMonthByPerson(phone);
+    }
+
     @GetMapping("/countFeeByCurrentDateAndThreeLastMonth/{phone}")
     public List<Fee> getFeesByCurrentDate(@PathVariable String phone){
         return feeService.getFeesByCurrentDate(phone);

@@ -14,8 +14,25 @@ public interface FeeRepository extends JpaRepository<Fee, Long> {
     @Query(value = "SELECT * FROM fee f WHERE f.phone = :phone AND f.fee_status = false ", nativeQuery = true)
     List<Fee> findFeeByPhoneAndFeeStatus(String phone);
 
+    // Total du mantant des factures en attentes pour un utilisateur
+    @Query(value = "SELECT COALESCE(SUM(f.price), 0) AS total_factures_attente FROM fee f WHERE f.phone = :phone AND f.fee_status = false ", nativeQuery = true)
+    Long sumFeeByPhoneAndFeeStatus(String phone);
+
     @Query(value = "SELECT * FROM fee f WHERE f.phone = :phone AND f.fee_status = true ", nativeQuery = true)
     List<Fee> findFeeByPhoneAndFeeStatusTrue(String phone);
+
+    // ### Nombre de factures payées pour un utilisateur
+    @Query(value = "SELECT COUNT(*) AS number_factures_payes FROM fee f WHERE f.phone = :phone AND f.fee_status = true ", nativeQuery = true)
+    Long numberFeeByPhoneAndFeeStatusTrue(String phone);
+
+    // Total mensuel du mantant des factures payées pour un utilisateur
+    @Query(value = "SELECT COALESCE(SUM(f.price), 0) AS total_mensuel FROM fee f WHERE f.phone = :phone AND f.fee_status = true AND MONTH(f.payment_date) = MONTH(CURRENT_DATE) AND YEAR(f.payment_date) = YEAR(CURRENT_DATE) ", nativeQuery = true)
+    Long findFeeByPhoneAndFeeStatusTrueCurrentMonth(String phone);
+
+    // Total annuel du mantant des factures payées pour un utilisateur
+    @Query(value = "SELECT COALESCE(SUM(f.price), 0) AS total_annuel FROM fee f WHERE f.phone = :phone AND f.fee_status = true AND YEAR(f.payment_date) = YEAR(CURRENT_DATE) ", nativeQuery = true)
+    Long findFeeByPhoneAndFeeStatusTrueCurrentYear(String phone);
+
     @Query(value = "SELECT COUNT(*) FROM fee f WHERE f.phone = :phone", nativeQuery = true)
     long count(String phone);
 
@@ -38,6 +55,13 @@ public interface FeeRepository extends JpaRepository<Fee, Long> {
             "WHERE f.phone = :phone " +
             "AND MONTH(f.period_fee) = MONTH(CURRENT_DATE) AND YEAR(f.period_fee) = YEAR(CURRENT_DATE)", nativeQuery = true)
     Long countFeeForCurrentMonthByPerson(String phone);
+
+    // Avoir la somme des factures d'un utilisateur pour le mois en cours.
+    @Query(value = "SELECT COALESCE(SUM(f.price), 0) AS somme_mois_courant " +
+            "FROM fee f " +
+            "WHERE f.phone = :phone " +
+            "AND MONTH(f.period_fee) = MONTH(CURRENT_DATE) AND YEAR(f.period_fee) = YEAR(CURRENT_DATE)", nativeQuery = true)
+    Long sumFeeForCurrentMonthByPerson(String phone);
 
     // Liste des factures des trois derniers mois.
     @Query(value = "SELECT * " +
