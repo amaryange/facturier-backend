@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -45,19 +46,40 @@ public class FeeService {
         }
     }
 
+    /*
     public List<Fee> findFeeByPhone(@RequestParam(name = "phone", defaultValue = "")String phone){
         return feeRepository.findFeeByPhone(phone);
     }
+
+     */
+
+    public Page<Fee> findFeeByPhone(String phone, Pageable pageable) {
+        return feeRepository.findFeeByPhone(phone, pageable);
+    }
+
+    /*
     public List<Fee> findFeeByPhoneAndFeeStatus(@RequestParam(name = "phone", defaultValue = "")String phone){
         return feeRepository.findFeeByPhoneAndFeeStatus(phone);
+    }
+     */
+
+    public Page<Fee> findFeeByPhoneAndFeeStatus(String phone, Pageable pageable) {
+        return feeRepository.findFeeByPhoneAndFeeStatus(phone, pageable);
     }
 
     public Long sumFeeByPhoneAndFeeStatus(@RequestParam(name = "phone", defaultValue = "")String phone){
         return feeRepository.sumFeeByPhoneAndFeeStatus(phone);
     }
 
+    /*
     public List<Fee> findFeeByPhoneAndFeeStatusTrue(@RequestParam(name = "phone", defaultValue = "")String phone){
-        return feeRepository.findFeeByPhoneAndFeeStatusTrue(phone);
+        return feeRepository.findFeeByPhoneAndFeeStatusTrue (phone);
+    }
+
+     */
+
+    public Page<Fee> findFeeByPhoneAndFeeStatusTrue(String phone, Pageable pageable) {
+        return feeRepository.findFeeByPhoneAndFeeStatusTrue(phone, pageable);
     }
 
     public Long numberFeeByPhoneAndFeeStatusTrue(@RequestParam(name = "phone", defaultValue = "")String phone){
@@ -95,9 +117,14 @@ public class FeeService {
     public Long sumFeeForCurrentMonthByPerson(@PathVariable String phone){
         return feeRepository.sumFeeForCurrentMonthByPerson(phone);
     }
-
+    /*
     public List<Fee> getFeesByCurrentDate(@PathVariable String phone){
         return feeRepository.getFeesByCurrentDate(phone);
+    }
+     */
+
+    public Page<Fee> getFeesByCurrentDate(String phone, Pageable pageable) {
+        return feeRepository.getFeesByCurrentDate(phone, pageable);
     }
 
     public Long getTotalFeeAmountForCurrentMonth(@RequestParam("role") String role){
@@ -116,13 +143,26 @@ public class FeeService {
         return feeRepository.getNumberOfInvoicesForMonthAndYear(month, year, role);
     }
 
+    /*
     public List<String> getAllFeeByOperator(@RequestParam("role") String role){
         return feeRepository.getAllFeeByOperator(role);
     }
+     */
 
+    public Page<Object[]> getAllFeeByOperator(String role, Pageable pageable) {
+        return feeRepository.getAllFeeByOperator(role, pageable);
+    }
+
+    /*
     public List<Fee> searchByFeeIdOrPaymentDate(@RequestParam("feeId") String feeId, @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date paymentDate){
         return feeRepository.searchByFeeIdOrPaymentDate(feeId, paymentDate);
     }
+     */
+
+    public Page<Fee> searchByFeeIdOrPaymentDate(String feeId, Date paymentDate, Pageable pageable) {
+        return feeRepository.searchByFeeIdOrPaymentDate(feeId, paymentDate, pageable);
+    }
+
 
     public Long numberOfFeeBuyThisYear(){
         return feeRepository.numberOfFeeBuyThisYear();
@@ -135,13 +175,25 @@ public class FeeService {
     public Long sumOfFeeBuyPerYear(@RequestParam("year") int year){
         return feeRepository.sumOfFeeBuyPerYear(year);
     }
-
+    /*
     public List<Fee> listOfFeeAvailable(){
         return feeRepository.listOfFeeAvailable();
     }
 
+     */
+
+    public Page<Fee> listOfFeeAvailable(Pageable pageable) {
+        return feeRepository.listOfFeeAvailable(pageable);
+    }
+    /*
     public List<String> findUsersWithUnpaidFees(){
         return feeRepository.findUsersWithUnpaidFees();
+    }
+
+     */
+
+    public Page<Object[]> findUsersWithUnpaidFees(Pageable pageable) {
+        return feeRepository.findUsersWithUnpaidFees(pageable);
     }
 
     public Long findFeeGeneratedThisCurrentYear(){

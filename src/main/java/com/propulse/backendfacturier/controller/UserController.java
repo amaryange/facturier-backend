@@ -12,6 +12,10 @@ import com.propulse.backendfacturier.repository.UserRepository;
 import com.propulse.backendfacturier.service.FeeService;
 import com.propulse.backendfacturier.service.MessageService;
 import com.propulse.backendfacturier.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -89,8 +93,16 @@ public class UserController {
     }
 
     @GetMapping("/getAllUsers")
+    public ResponseEntity<Page<Object[]>> getAllUsers(Pageable pageable) {
+        Page<Object[]> usersPage = userService.findAllUsers(pageable);
+        return ResponseEntity.ok(usersPage);
+    }
+
+    /*
+    @GetMapping("/getAllUsers")
     public List<Map<String, Object>> getAllUsers() {
         List<String> users = userRepository.findAllUser();
+        //Page<Object[]> usersPage = userService.findAllUsers(pageable);
         List<Map<String, Object>> result = new ArrayList<>();
 
         for (String user : users) {
@@ -105,6 +117,9 @@ public class UserController {
         return result;
     }
 
+     */
+
+    /*
     @GetMapping("/getAllUserSupport")
     public List<Map<String, Object>> findAllUserSupport() {
         List<String> supports = userRepository.findAllUserSupport();
@@ -121,6 +136,13 @@ public class UserController {
         }
 
         return result;
+    }
+     */
+
+    @GetMapping("/supportUsers")
+    public ResponseEntity<Page<Object[]>> getSupportUsers(Pageable pageable) {
+        Page<Object[]> usersPage = userService.findAllUserSupport(pageable);
+        return ResponseEntity.ok(usersPage);
     }
 
     @PostMapping("/sendMessage")
@@ -150,6 +172,7 @@ public class UserController {
         return user;
 
     }
+    /*
     @GetMapping("/fees")
     public Map<String, Object> findFeeByPhone(@RequestParam(name = "phone", defaultValue = "")String phone) {
         Map<String, Object> map = new HashMap<>();
@@ -174,11 +197,23 @@ public class UserController {
         return map;
     }
 
+     */
+
+    @GetMapping("/fees")
+    public ResponseEntity<Page<Fee>> findFeeByPhoneAndFeeStatus(
+            @RequestParam String phone,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Fee> feePage = feeService.findFeeByPhoneAndFeeStatus(phone, pageable);
+        return ResponseEntity.ok(feePage);
+    }
+
     @GetMapping("/fees/outstanding")
     public Long sumFeeByPhoneAndFeeStatus(@RequestParam(name = "phone", defaultValue = "")String phone) {
         return feeService.sumFeeByPhoneAndFeeStatus(phone);
     }
-
+    /*
     @PreAuthorize("hasAuthority('User')")
     @GetMapping("/fees/true")
     public Map<String, Object> findFeeByPhoneTrue(@RequestParam(name = "phone", defaultValue = "")String phone) {
@@ -202,6 +237,18 @@ public class UserController {
             }
         }
         return map;
+    }
+
+     */
+
+    @GetMapping("/fees/true")
+    public ResponseEntity<Page<Fee>> findFeeByPhoneTrue(
+            @RequestParam String phone,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Fee> feePage = feeService.findFeeByPhoneAndFeeStatusTrue(phone, pageable);
+        return ResponseEntity.ok(feePage);
     }
 
     @GetMapping("/fees/number")
@@ -252,6 +299,7 @@ public class UserController {
 
     }
 
+    /*
     @GetMapping("/listOfActivedUser")
     public List<Map<String, Object>> listOfActivedUser(){
 
@@ -272,6 +320,15 @@ public class UserController {
         return result;
 
     }
+     */
+
+    @GetMapping("/listOfActivedUser")
+    public ResponseEntity<Page<Object[]>> listOfActivedUser(Pageable pageable) {
+        Page<Object[]> usersPage = userService.listOfActivedUser(pageable);
+        return ResponseEntity.ok(usersPage);
+    }
+
+    /*
     @GetMapping("/listOfUsersOperator")
     public List<Map<String, Object>> listOfUsersOperator(){
 
@@ -290,6 +347,14 @@ public class UserController {
 
         return result;
 
+    }
+
+     */
+
+    @GetMapping("/listOfUsersOperator")
+    public ResponseEntity<Page<Object[]>> getOperatorUsers(Pageable pageable) {
+        Page<Object[]> usersPage = userService.listOfUsersOperator(pageable);
+        return ResponseEntity.ok(usersPage);
     }
 
     @GetMapping("/refresh-token")

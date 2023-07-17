@@ -5,7 +5,11 @@ import com.propulse.backendfacturier.entity.Operator;
 import com.propulse.backendfacturier.service.FeeService;
 import com.propulse.backendfacturier.service.OperatorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,16 +22,31 @@ public class FeeController {
     @Autowired
     private FeeService feeService;
 
+    /*
     @GetMapping("/all?phone=")
     public List<Fee> getAllFee(@RequestParam(name = "phone", defaultValue = "")String phone){
         return feeService.findFeeByPhone(phone);
     }
 
+     */
 
+    @GetMapping("/all")
+    public ResponseEntity<Page<Fee>> getAllFeeOrFeeByPhone(
+            @RequestParam String phone,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Fee> feesPage = feeService.findFeeByPhone(phone, pageable);
+        return ResponseEntity.ok(feesPage);
+    }
+
+    /*
     @GetMapping("/allFee?phone=")
     public List<Fee> findFeeByPhoneAndFeeStatus(@RequestParam(name = "phone", defaultValue = "")String phone){
         return feeService.findFeeByPhone(phone);
     }
+     */
+
     @PreAuthorize("hasAuthority('User')")
     @GetMapping("/countAllFeeBy/{phone}")
     public Long countAllFeeByPhone(@PathVariable String phone){
@@ -91,10 +110,22 @@ public class FeeController {
     public Long sumFeeForCurrentMonthByPerson(@PathVariable String phone){
         return feeService.sumFeeForCurrentMonthByPerson(phone);
     }
-
+    /*
     @GetMapping("/countFeeByCurrentDateAndThreeLastMonth/{phone}")
     public List<Fee> getFeesByCurrentDate(@PathVariable String phone){
         return feeService.getFeesByCurrentDate(phone);
+    }
+
+     */
+
+    @GetMapping("/countFeeByCurrentDateAndThreeLastMonth")
+    public ResponseEntity<Page<Fee>> getFeesByCurrentDate(
+            @RequestParam String phone,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Fee> feePage = feeService.getFeesByCurrentDate(phone, pageable);
+        return ResponseEntity.ok(feePage);
     }
 
     @GetMapping("/getTotalFeeAmountForCurrentMonth")
@@ -117,6 +148,7 @@ public class FeeController {
         return feeService.getNumberOfInvoicesForMonthAndYear(month, year, role);
     }
 
+    /*
     @GetMapping("/getAllFeeByOperator")
     public List<Map<String, Object>>getAllFeeByOperator(@RequestParam("role") String role){
         List<String> fees = feeService.getAllFeeByOperator(role);
@@ -136,9 +168,34 @@ public class FeeController {
         return result;
     }
 
+     */
+    @GetMapping("/getAllFeeByOperator")
+    public ResponseEntity<Page<Object[]>> getAllFeeByOperator(
+            @RequestParam String role,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Object[]> feePage = feeService.getAllFeeByOperator(role, pageable);
+        return ResponseEntity.ok(feePage);
+    }
+
+    /*
     @GetMapping("/searchByFeeIdOrPaymentDate")
     public List<Fee>searchByFeeIdOrPaymentDate(@RequestParam(value = "feeId", defaultValue = "") String feeId, @RequestParam(value = "date", defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") Date paymentDate){
         return feeService.searchByFeeIdOrPaymentDate(feeId, paymentDate);
+    }
+
+     */
+
+    @GetMapping("/searchByFeeIdOrPaymentDate")
+    public ResponseEntity<Page<Fee>> searchByFeeIdOrPaymentDate(
+            @RequestParam(required = false) String feeId,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date paymentDate,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Fee> feePage = feeService.searchByFeeIdOrPaymentDate(feeId, paymentDate, pageable);
+        return ResponseEntity.ok(feePage);
     }
 
     @GetMapping("/numberOfFeeBuyThisYear")
@@ -155,12 +212,21 @@ public class FeeController {
     public Long sumOfFeeBuyPerYear(@RequestParam("year") int year) {
         return feeService.sumOfFeeBuyPerYear(year);
     }
-
+    /*
     @GetMapping("/listOfFeeAvailable")
     public List<Fee> listOfFeeAvailable(){
         return feeService.listOfFeeAvailable();
     }
+     */
 
+    public ResponseEntity<Page<Fee>> listOfFeeAvailable(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Fee> feesPage = feeService.listOfFeeAvailable(pageable);
+        return ResponseEntity.ok(feesPage);
+    }
+    /*
     @GetMapping("/findUsersWithUnpaidFees")
     public List<Map<String, Object>> findUsersWithUnpaidFees(){
 
@@ -182,6 +248,16 @@ public class FeeController {
 
         return result;
 
+    }
+
+     */
+    @GetMapping("/findUsersWithUnpaidFees")
+    public ResponseEntity<Page<Object[]>> findUsersWithUnpaidFees(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Object[]> unpaidFeesPage = feeService.findUsersWithUnpaidFees(pageable);
+        return ResponseEntity.ok(unpaidFeesPage);
     }
 
     @GetMapping("/findFeeGeneratedThisCurrentYear")

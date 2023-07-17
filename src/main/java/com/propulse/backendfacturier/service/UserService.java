@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.util.*;
@@ -129,12 +132,24 @@ public class UserService {
         return userRepository.findUserByPhone(phone);
     }
 
+    public Page<Object[]> findAllUsers(Pageable pageable) {
+        return userRepository.findAllUsers(pageable);
+    }
+
+    /*
     public List<String> getAllUsers(){
         return userRepository.findAllUser();
     }
+     */
 
+    /*
     public List<String> findAllUserSupport(){
         return userRepository.findAllUserSupport();
+    }
+     */
+
+    public Page<Object[]> findAllUserSupport(Pageable pageable) {
+        return userRepository.findAllUserSupport(pageable);
     }
 
     public User getOneUser(@PathVariable Long id){
@@ -145,12 +160,23 @@ public class UserService {
 
     public List<String> getUserInfoByEmail(String email){ return userRepository.getUserInfoByEmail(email); }
 
+    /*
     public List<String> listOfActivedUser(){
         return userRepository.listOfActivedUser();
     }
+     */
 
+    public Page<Object[]> listOfActivedUser(Pageable pageable) {
+        return userRepository.listOfActivedUser(pageable);
+    }
+    /*
     public List<String> listOfUsersOperator(){
         return userRepository.listOfUsersOperator();
+    }
+     */
+
+    public Page<Object[]> listOfUsersOperator(Pageable pageable) {
+        return userRepository.listOfUsersOperator(pageable);
     }
 
 }

@@ -4,22 +4,45 @@ import com.propulse.backendfacturier.entity.Fee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
 public interface FeeRepository extends JpaRepository<Fee, Long> {
+    /*
     List<Fee> findFeeByPhone(String phone);
+     */
+
+    Page<Fee> findFeeByPhone(String phone, Pageable pageable);
+    /*
     @Query(value = "SELECT * FROM fee f WHERE f.phone = :phone AND f.fee_status = false ", nativeQuery = true)
     List<Fee> findFeeByPhoneAndFeeStatus(String phone);
+
+     */
+
+    @Query(value = "SELECT * FROM fee f WHERE f.phone = :phone AND f.fee_status = false",
+            countQuery = "SELECT COUNT(*) FROM fee f WHERE f.phone = :phone AND f.fee_status = false",
+            nativeQuery = true)
+    Page<Fee> findFeeByPhoneAndFeeStatus(String phone, Pageable pageable);
+
 
     // Total du mantant des factures en attentes pour un utilisateur
     @Query(value = "SELECT COALESCE(SUM(f.price), 0) AS total_factures_attente FROM fee f WHERE f.phone = :phone AND f.fee_status = false ", nativeQuery = true)
     Long sumFeeByPhoneAndFeeStatus(String phone);
 
+    /*
     @Query(value = "SELECT * FROM fee f WHERE f.phone = :phone AND f.fee_status = true ", nativeQuery = true)
     List<Fee> findFeeByPhoneAndFeeStatusTrue(String phone);
+
+     */
+
+    @Query(value = "SELECT * FROM fee f WHERE f.phone = :phone AND f.fee_status = true",
+            countQuery = "SELECT COUNT(*) FROM fee f WHERE f.phone = :phone AND f.fee_status = true",
+            nativeQuery = true)
+    Page<Fee> findFeeByPhoneAndFeeStatusTrue(String phone, Pageable pageable);
 
     // ### Nombre de factures payées pour un utilisateur
     @Query(value = "SELECT COUNT(*) AS number_factures_payes FROM fee f WHERE f.phone = :phone AND f.fee_status = true ", nativeQuery = true)
@@ -64,11 +87,26 @@ public interface FeeRepository extends JpaRepository<Fee, Long> {
     Long sumFeeForCurrentMonthByPerson(String phone);
 
     // Liste des factures des trois derniers mois.
+    /*
     @Query(value = "SELECT * " +
             "FROM fee f " +
             "WHERE f.period_fee >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH) AND f.phone = :phone " +
             "AND f.period_fee <= CURDATE() ", nativeQuery = true)
     List<Fee> getFeesByCurrentDate(String phone);
+     */
+
+    // Liste des factures des trois derniers mois.
+    @Query(value = "SELECT * " +
+            "FROM fee f " +
+            "WHERE f.period_fee >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH) AND f.phone = :phone " +
+            "AND f.period_fee <= CURDATE()",
+            countQuery = "SELECT COUNT(*) " +
+                    "FROM fee f " +
+                    "WHERE f.period_fee >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH) AND f.phone = :phone " +
+                    "AND f.period_fee <= CURDATE()",
+            nativeQuery = true)
+    Page<Fee> getFeesByCurrentDate(String phone, Pageable pageable);
+
 
     // Faire la somme des factures pour le mois en cours
     @Query(value= "SELECT COALESCE(SUM(f.price), 0) AS sommeFacturesMoisCourant " +
@@ -92,15 +130,38 @@ public interface FeeRepository extends JpaRepository<Fee, Long> {
     Long getNumberOfInvoicesForMonthAndYear(int month, int year, String role);
 
     // Faire le listing des factures
+    /*
     @Query(value = "SELECT f.feeId, f.paymentDate, f.periodFee, f.price, f.phone FROM Fee f " +
             "JOIN f.operator o " +
             "WHERE o.label = :role ")
     List<String> getAllFeeByOperator(String role);
 
+     */
+
+    // Faire le listing des factures
+    @Query(value = "SELECT f.feeId, f.paymentDate, f.periodFee, f.price, f.phone " +
+            "FROM Fee f " +
+            "JOIN f.operator o " +
+            "WHERE o.label = :role",
+            countQuery = "SELECT COUNT(f) " +
+                    "FROM Fee f " +
+                    "JOIN f.operator o " +
+                    "WHERE o.label = :role")
+    Page<Object[]> getAllFeeByOperator(String role, Pageable pageable);
+
+
 
     // Faire une recherche sur des factures
+    /*
     @Query(value = "SELECT f FROM Fee f WHERE f.feeId = :feeId OR f.paymentDate = :paymentDate")
     List<Fee> searchByFeeIdOrPaymentDate(String feeId, @DateTimeFormat(pattern = "yyyy-MM-dd") Date paymentDate);
+     */
+
+    // Faire une recherche sur des factures
+    @Query(value = "SELECT f FROM Fee f WHERE f.feeId = :feeId OR f.paymentDate = :paymentDate",
+            countQuery = "SELECT COUNT(f) FROM Fee f WHERE f.feeId = :feeId OR f.paymentDate = :paymentDate")
+    Page<Fee> searchByFeeIdOrPaymentDate(String feeId, @DateTimeFormat(pattern = "yyyy-MM-dd") Date paymentDate, Pageable pageable);
+
 
     // Nombre de factures payées sur l'année en cours
     @Query("SELECT COUNT(f) FROM Fee f WHERE f.feeStatus = true AND YEAR(f.paymentDate) = YEAR(CURRENT_DATE())")
@@ -115,14 +176,30 @@ public interface FeeRepository extends JpaRepository<Fee, Long> {
     Long sumOfFeeBuyPerYear(int year);
 
     // Liste des factures disponibles
+    /*
     @Query("SELECT f FROM Fee f WHERE f.feeStatus = false ")
     List<Fee> listOfFeeAvailable();
+
+     */
+
+    @Query("SELECT f FROM Fee f WHERE f.feeStatus = false")
+    Page<Fee> listOfFeeAvailable(Pageable pageable);
+
+    // Liste des clients n’ayant pas payé leur facture apres la date limite
+    /*
+    @Query("SELECT f.feeId, f.price, f.limitDate, u.lastname, u.firstname, u.email, u.phone FROM Fee f " +
+            "INNER JOIN User u ON f.phone = u.phone " +
+            "WHERE f.feeStatus = false AND f.limitDate < CURRENT_DATE()")
+    List<String> findUsersWithUnpaidFees();
+
+     */
 
     // Liste des clients n’ayant pas payé leur facture apres la date limite
     @Query("SELECT f.feeId, f.price, f.limitDate, u.lastname, u.firstname, u.email, u.phone FROM Fee f " +
             "INNER JOIN User u ON f.phone = u.phone " +
             "WHERE f.feeStatus = false AND f.limitDate < CURRENT_DATE()")
-    List<String> findUsersWithUnpaidFees();
+    Page<Object[]> findUsersWithUnpaidFees(Pageable pageable);
+
 
     // Nombre de factures générées (sur l’année)
     @Query("SELECT COUNT(f) FROM Fee f")
