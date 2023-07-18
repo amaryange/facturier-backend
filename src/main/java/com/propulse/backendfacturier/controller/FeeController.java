@@ -65,6 +65,7 @@ public class FeeController {
         return feeService.countFeePriceByPerson(phone);
     }
 
+    /*
     @GetMapping("/findAllFeeByUser/{feeId}")
     public List<Map<String, Object>> findAllFeeByUser(@PathVariable String feeId) {
         List<String> fees = feeService.findAllFeeByUser(feeId);
@@ -89,16 +90,41 @@ public class FeeController {
 
         return result;
     }
+
+     */
+    @GetMapping("/findAllFeeByUser")
+    public ResponseEntity<Page<Map<String, Object>>> findAllFeeByUser(
+            @RequestParam String feeId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Map<String, Object>> feePage = feeService.findAllFeeByUser(feeId, pageable);
+        return ResponseEntity.ok(feePage);
+    }
+
     @PreAuthorize("hasAuthority('User')")
     @PostMapping("/update/{id}")
     public Fee completedFee(@PathVariable Long id,@RequestBody String debtor){
         return feeService.updateFee(id, debtor);
     }
-
+    /*
     @PreAuthorize("hasAuthority('User')")
     @GetMapping("/getFee/{debtor}")
     public List<Fee> findFeeByDebtor(@PathVariable String debtor){
         return feeService.findFeeByDebtor(debtor);
+    }
+
+     */
+
+    @PreAuthorize("hasAuthority('User')")
+    @GetMapping("/findFeeByDebtor")
+    public ResponseEntity<Page<Fee>> findFeeByDebtor(
+            @RequestParam String debtor,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Fee> feePage = feeService.findFeeByDebtor(debtor, pageable);
+        return ResponseEntity.ok(feePage);
     }
 
     @GetMapping("/countFeeForCurrentMonth/{phone}")
@@ -170,12 +196,12 @@ public class FeeController {
 
      */
     @GetMapping("/getAllFeeByOperator")
-    public ResponseEntity<Page<Object[]>> getAllFeeByOperator(
+    public ResponseEntity<Page<Map<String, Object>>> getAllFeeByOperator(
             @RequestParam String role,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Object[]> feePage = feeService.getAllFeeByOperator(role, pageable);
+        Page<Map<String, Object>> feePage = feeService.getAllFeeByOperator(role, pageable);
         return ResponseEntity.ok(feePage);
     }
 
@@ -218,7 +244,7 @@ public class FeeController {
         return feeService.listOfFeeAvailable();
     }
      */
-
+    @GetMapping("/listOfFeeAvailable")
     public ResponseEntity<Page<Fee>> listOfFeeAvailable(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -252,11 +278,11 @@ public class FeeController {
 
      */
     @GetMapping("/findUsersWithUnpaidFees")
-    public ResponseEntity<Page<Object[]>> findUsersWithUnpaidFees(
+    public ResponseEntity<Page<Map<String, Object>>> findUsersWithUnpaidFees(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Object[]> unpaidFeesPage = feeService.findUsersWithUnpaidFees(pageable);
+        Page<Map<String, Object>> unpaidFeesPage = feeService.findUsersWithUnpaidFees(pageable);
         return ResponseEntity.ok(unpaidFeesPage);
     }
 
@@ -266,13 +292,23 @@ public class FeeController {
     }
 
     @GetMapping("/listOfFeeUnPaidPerMonth")
-    public Long listOfFeeUnPaidPerMonth(){
-        return feeService.listOfFeeUnPaidPerMonth();
+    public ResponseEntity<Page<Fee>> listOfFeeUnPaidPerMonth(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Fee> unpaidFeesPagePermonth = feeService.listOfFeeUnPaidPerMonth(pageable);
+        return ResponseEntity.ok(unpaidFeesPagePermonth);
     }
 
     @GetMapping("/listOfFeePaidPerMonth")
-    public Long listOfFeePaidPerMonth(){
-        return feeService.listOfFeePaidPerMonth();
+    public ResponseEntity<Page<Fee>> listOfFeePaidPerMonth(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Fee> paidFeesPagePermonth = feeService.listOfFeePaidPerMonth(pageable);
+        return ResponseEntity.ok(paidFeesPagePermonth);
     }
 
 }

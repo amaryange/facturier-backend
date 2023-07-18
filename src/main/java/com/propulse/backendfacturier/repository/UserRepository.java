@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Map;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     //Obtenir les infos de l'utilisateur par son email.
@@ -20,10 +21,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<String> findAllUser();
      */
 
-    @Query(value = "SELECT u.email, u.lastname, u.firstname FROM users u ORDER BY u.lastname ASC, u.firstname ASC",
+    @Query(value = "SELECT u.email AS email, u.lastname AS lastname, u.firstname AS firstname FROM users u ORDER BY u.lastname ASC, u.firstname ASC",
             countQuery = "SELECT COUNT(*) FROM users u",
             nativeQuery = true)
-    Page<Object[]> findAllUsers(Pageable pageable);
+    Page<Map<String, Object>> findAllUsers(Pageable pageable);
 
     // Liste des utilisateurs avec le rôle de Support.
     /*
@@ -36,7 +37,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
      */
 
-    @Query(value = "SELECT u.email, u.lastname, u.firstname, r.name " +
+    @Query(value = "SELECT u.email, u.lastname, u.firstname, r.name AS role_support " +
             "FROM users u " +
             "JOIN users_roles ur ON u.id = ur.users_id " +
             "JOIN role r ON ur.roles_id = r.id " +
@@ -48,12 +49,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
                     "JOIN role r ON ur.roles_id = r.id " +
                     "WHERE r.name = 'Support'",
             nativeQuery = true)
-    Page<Object[]> findAllUserSupport(Pageable pageable);
+    Page<Map<String, Object>> findAllUserSupport(Pageable pageable);
 
     //Liste des comptes actifs
-
-    @Query("SELECT u.lastname, u.firstname, u.email, u.active, u.dateAddedUser FROM User u WHERE u.active = true")
-    Page<Object[]> listOfActivedUser(Pageable pageable);
+    @Query("SELECT u.lastname AS lastname, u.firstname AS firstname, u.email AS email, u.active AS active, u.dateAddedUser AS dateAddedUser FROM User u WHERE u.active = true")
+    Page<Map<String, Object>> listOfActivedUser(Pageable pageable);
 
 
     /*

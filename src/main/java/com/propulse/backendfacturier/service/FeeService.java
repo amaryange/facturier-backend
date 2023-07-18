@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -102,12 +103,24 @@ public class FeeService {
         return feeRepository.countFeePriceByPerson(phone);
     }
 
+    /*
     public List<String> findAllFeeByUser(@PathVariable String feeId){
         return feeRepository.findAllFeeByUser(feeId);
     }
 
+     */
+
+    public Page<Map<String, Object>> findAllFeeByUser(String feeId, Pageable pageable) {
+        return feeRepository.findAllFeeByUser(feeId, pageable);
+    }
+    /*
     public List<Fee> findFeeByDebtor(@PathVariable String debtor){
         return feeRepository.findFeeByDebtor(debtor);
+    }
+
+     */
+    public Page<Fee> findFeeByDebtor(String debtor, Pageable pageable) {
+        return feeRepository.findFeeByDebtor(debtor, pageable);
     }
 
     public Long countFeeForCurrentMonthByPerson(@PathVariable String phone){
@@ -149,7 +162,7 @@ public class FeeService {
     }
      */
 
-    public Page<Object[]> getAllFeeByOperator(String role, Pageable pageable) {
+    public Page<Map<String, Object>> getAllFeeByOperator(String role, Pageable pageable) {
         return feeRepository.getAllFeeByOperator(role, pageable);
     }
 
@@ -192,7 +205,7 @@ public class FeeService {
 
      */
 
-    public Page<Object[]> findUsersWithUnpaidFees(Pageable pageable) {
+    public Page<Map<String, Object>> findUsersWithUnpaidFees(Pageable pageable) {
         return feeRepository.findUsersWithUnpaidFees(pageable);
     }
 
@@ -200,12 +213,12 @@ public class FeeService {
         return feeRepository.findFeeGeneratedThisCurrentYear();
     }
 
-    public Long listOfFeeUnPaidPerMonth(){
-        return feeRepository.listOfFeeUnPaidPerMonth();
+    public Page<Fee> listOfFeeUnPaidPerMonth(Pageable pageable){
+        return feeRepository.listOfFeeUnPaidPerMonth(pageable);
     }
 
-    public Long listOfFeePaidPerMonth(){
-        return feeRepository.listOfFeePaidPerMonth();
+    public Page<Fee> listOfFeePaidPerMonth(Pageable pageable){
+        return feeRepository.listOfFeePaidPerMonth(pageable);
     }
 
 

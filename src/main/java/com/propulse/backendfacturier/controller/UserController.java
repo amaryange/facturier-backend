@@ -93,8 +93,8 @@ public class UserController {
     }
 
     @GetMapping("/getAllUsers")
-    public ResponseEntity<Page<Object[]>> getAllUsers(Pageable pageable) {
-        Page<Object[]> usersPage = userService.findAllUsers(pageable);
+    public ResponseEntity<Page<Map<String, Object>>> getAllUsers(Pageable pageable) {
+        Page<Map<String, Object>> usersPage = userService.findAllUsers(pageable);
         return ResponseEntity.ok(usersPage);
     }
 
@@ -139,9 +139,9 @@ public class UserController {
     }
      */
 
-    @GetMapping("/supportUsers")
-    public ResponseEntity<Page<Object[]>> getSupportUsers(Pageable pageable) {
-        Page<Object[]> usersPage = userService.findAllUserSupport(pageable);
+    @GetMapping("/getAllUserSupport")
+    public ResponseEntity<Page<Map<String, Object>>> getSupportUsers(Pageable pageable) {
+        Page<Map<String, Object>> usersPage = userService.findAllUserSupport(pageable);
         return ResponseEntity.ok(usersPage);
     }
 
@@ -323,8 +323,8 @@ public class UserController {
      */
 
     @GetMapping("/listOfActivedUser")
-    public ResponseEntity<Page<Object[]>> listOfActivedUser(Pageable pageable) {
-        Page<Object[]> usersPage = userService.listOfActivedUser(pageable);
+    public ResponseEntity<Page<Map<String, Object>>> listOfActivedUser(Pageable pageable) {
+        Page<Map<String, Object>> usersPage = userService.listOfActivedUser(pageable);
         return ResponseEntity.ok(usersPage);
     }
 

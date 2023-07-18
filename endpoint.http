@@ -90,7 +90,7 @@ GET http://localhost:8082/fee/listOfFeeAvailable
 GET http://localhost:8082/fee/findUsersWithUnpaidFees
 
 ### Obtenir la liste des factures par numéro d'identifiant de factures
-GET http://localhost:8082/fee/findAllFeeByUser/010345768998760
+GET http://localhost:8082/fee/findAllFeeByUser?feeId=010345768998760
 
 ### mise à jour de la facture si elle payée (true si oui, false si non)
 ### Tu peux mettre "fact1@gmail.com" dans un objet et l'envoyé à la validation
@@ -105,7 +105,7 @@ Content-Type: application/json
 GET http://localhost:8082/fee/listOfFeeUnPaidPerMonth
 
 ### Liste des factures pour les 3 derniers mois.
-GET http://localhost:8082/fee/countFeeByCurrentDateAndThreeLastMonth/0723546741
+GET http://localhost:8082/fee/countFeeByCurrentDateAndThreeLastMonth?phone=0723546741
 
 ### nombre de facture pour le mois courant
 GET http://localhost:8082/fee/countFeeForCurrentMonth/0723546741

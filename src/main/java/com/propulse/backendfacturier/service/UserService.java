@@ -132,7 +132,7 @@ public class UserService {
         return userRepository.findUserByPhone(phone);
     }
 
-    public Page<Object[]> findAllUsers(Pageable pageable) {
+    public Page<Map<String, Object>> findAllUsers(Pageable pageable) {
         return userRepository.findAllUsers(pageable);
     }
 
@@ -148,7 +148,7 @@ public class UserService {
     }
      */
 
-    public Page<Object[]> findAllUserSupport(Pageable pageable) {
+    public Page<Map<String, Object>> findAllUserSupport(Pageable pageable) {
         return userRepository.findAllUserSupport(pageable);
     }
 
@@ -166,7 +166,7 @@ public class UserService {
     }
      */
 
-    public Page<Object[]> listOfActivedUser(Pageable pageable) {
+    public Page<Map<String, Object>> listOfActivedUser(Pageable pageable) {
         return userRepository.listOfActivedUser(pageable);
     }
     /*
