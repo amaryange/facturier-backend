@@ -24,10 +24,11 @@ public interface FeeRepository extends JpaRepository<Fee, Long> {
 
      */
 
-    @Query(value = "SELECT * FROM fee f WHERE f.phone = :phone AND f.fee_status = false",
-            countQuery = "SELECT COUNT(*) FROM fee f WHERE f.phone = :phone AND f.fee_status = false",
-            nativeQuery = true)
-    Page<Fee> findFeeByPhoneAndFeeStatus(String phone, Pageable pageable);
+    @Query(value = "SELECT f.feeId AS feeId, f.periodFee AS periodFee, f.limitDate AS limitDate, f.price AS price, " +
+            "f.phone AS phone, f.debtor AS debtor, f.paymentDate AS paymentDate, o.name AS name , o.label AS label, " +
+            "o.id AS idPicture FROM Fee f JOIN f.operator o WHERE f.phone = :phone AND f.feeStatus = false",
+            countQuery = "SELECT COUNT(f) FROM Fee f WHERE f.phone = :phone AND f.feeStatus = false")
+    Page<Map<String, Object>> findFeeByPhoneAndFeeStatus(String phone, Pageable pageable);
 
 
     // Total du mantant des factures en attentes pour un utilisateur

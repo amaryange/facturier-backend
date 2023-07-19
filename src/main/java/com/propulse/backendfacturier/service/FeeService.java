@@ -64,7 +64,7 @@ public class FeeService {
     }
      */
 
-    public Page<Fee> findFeeByPhoneAndFeeStatus(String phone, Pageable pageable) {
+    public Page<Map<String, Object>> findFeeByPhoneAndFeeStatus(String phone, Pageable pageable) {
         return feeRepository.findFeeByPhoneAndFeeStatus(phone, pageable);
     }
 

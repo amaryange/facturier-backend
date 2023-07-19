@@ -200,12 +200,12 @@ public class UserController {
      */
 
     @GetMapping("/fees")
-    public ResponseEntity<Page<Fee>> findFeeByPhoneAndFeeStatus(
+    public ResponseEntity<Page<Map<String, Object>>> findFeeByPhoneAndFeeStatus(
             @RequestParam String phone,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Fee> feePage = feeService.findFeeByPhoneAndFeeStatus(phone, pageable);
+        Page<Map<String, Object>> feePage = feeService.findFeeByPhoneAndFeeStatus(phone, pageable);
         return ResponseEntity.ok(feePage);
     }
 
