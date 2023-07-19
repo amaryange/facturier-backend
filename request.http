@@ -3,7 +3,7 @@
 GET http://localhost:8082/fee/sumFeeForCurrentMonthByPerson/0723546741
 
 ### Nombre de factures en attentes pour un utilisateur
-GET http://localhost:8082/user/fees?phone=0723546744
+GET http://localhost:8082/user/fees/invoicesOutstanding?phone=0723546744
 
 ### Total mensuel du mantant des factures payées pour un utilisateur
 GET http://localhost:8082/user/fees/month?phone=0723546744

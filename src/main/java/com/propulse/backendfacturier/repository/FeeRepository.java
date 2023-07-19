@@ -50,6 +50,10 @@ public interface FeeRepository extends JpaRepository<Fee, Long> {
     @Query(value = "SELECT COUNT(*) AS number_factures_payes FROM fee f WHERE f.phone = :phone AND f.fee_status = true ", nativeQuery = true)
     Long numberFeeByPhoneAndFeeStatusTrue(String phone);
 
+    // nombre de factures en attente pour un utilisateur
+    @Query(value = "SELECT COUNT(*) AS number_factures_attentes FROM fee f WHERE f.phone = :phone AND f.fee_status = false ", nativeQuery = true)
+    Long numberFeeByPhoneAndFeeStatusFalse(String phone);
+
     // Total mensuel du mantant des factures payées pour un utilisateur
     @Query(value = "SELECT COALESCE(SUM(f.price), 0) AS total_mensuel FROM fee f WHERE f.phone = :phone AND f.fee_status = true AND MONTH(f.payment_date) = MONTH(CURRENT_DATE) AND YEAR(f.payment_date) = YEAR(CURRENT_DATE) ", nativeQuery = true)
     Long findFeeByPhoneAndFeeStatusTrueCurrentMonth(String phone);

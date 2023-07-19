@@ -256,6 +256,11 @@ public class UserController {
         return feeService.numberFeeByPhoneAndFeeStatusTrue(phone);
     }
 
+    @GetMapping("/fees/invoicesOutstanding")
+    public Long numberFeeByPhoneAndFeeStatusFalse(@RequestParam(name = "phone", defaultValue = "")String phone) {
+        return feeService.numberFeeByPhoneAndFeeStatusFalse(phone);
+    }
+
     @GetMapping("/fees/month")
     public Long sumFeeByPhoneAndFeeStatusTrueCurrentMonth(@RequestParam(name = "phone", defaultValue = "")String phone) {
         return feeService.findFeeByPhoneAndFeeStatusTrueCurrentMonth(phone);

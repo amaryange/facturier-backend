@@ -87,6 +87,10 @@ public class FeeService {
         return feeRepository.numberFeeByPhoneAndFeeStatusTrue(phone);
     }
 
+    public Long numberFeeByPhoneAndFeeStatusFalse(@RequestParam(name = "phone", defaultValue = "")String phone){
+        return feeRepository.numberFeeByPhoneAndFeeStatusFalse(phone);
+    }
+
     public Long findFeeByPhoneAndFeeStatusTrueCurrentMonth(@RequestParam(name = "phone", defaultValue = "")String phone){
         return feeRepository.findFeeByPhoneAndFeeStatusTrueCurrentMonth(phone);
     }
