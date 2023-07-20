@@ -1,44 +1,42 @@
 
-### Total mensuelles du mantant des factures pour un utilisateur
+### Total mensuelles du montant des factures pour un utilisateur (OK)
 GET http://localhost:8082/fee/sumFeeForCurrentMonthByPerson/0723546741
 
-### Nombre de factures en attentes pour un utilisateur
+### Nombre de factures en attentes pour un utilisateur (OK)
 GET http://localhost:8082/user/fees/invoicesOutstanding?phone=0723546744
 
-### Total mensuel du mantant des factures payées pour un utilisateur
+### Total mensuel du mantant des factures payées pour un utilisateur (OK)
 GET http://localhost:8082/user/fees/month?phone=0723546744
 
-### Total annuel du mantant des factures payées pour un utilisateur
+### Total annuel du mantant des factures payées pour un utilisateur (OK)
 GET http://localhost:8082/user/fees/year?phone=0723546744
 
-### Total du mantant des toutes les factures payées pour un utilisateur
-GET http://localhost:8082/fee/countFeeByPerson/phone=0723546744
+### ajout de date de debut et une date de fin (A FAIRE)
 
-### Liste de factures a payées pour un utilisateur
-GET http://localhost:8082/user/fees?phone=0723546744
 
-### Liste de factures payées pour un utilisateur
-GET http://localhost:8082/user/fees/true?phone=0723546744
+### Total du mantant des toutes les factures payées pour un utilisateur (OK)
+GET http://localhost:8082/fee/countFeeByPerson/0723546741
 
-### Total du mantant des factures en attentes pour un utilisateur
+### Liste de factures à payées pour un utilisateur (OK)
+GET http://localhost:8082/user/fees?phone=0723546744&page=0&size=1
+
+### Liste de factures payées pour un utilisateur (OK)
+GET http://localhost:8082/user/fees/true?phone=0723546741&page=0&size=1
+
+### Total du mantant des factures en attentes pour un utilisateur (OK)
 GET http://localhost:8082/user/fees/outstanding?phone=0723546744
 
-### Nombre de factures payées pour un utilisateur
-GET http://localhost:8082/user/fees/number?phone=0723546744
+### Nombre de factures payées pour un utilisateur (OK)
+GET http://localhost:8082/user/fees/number?phone=0723546741
 
-### Liste des contacts pour un utilisateur
-GET http://localhost:8082/user/getAllUserSupport
+### Liste des utilisateurs avec le rôle support
+GET http://localhost:8082/user/getAllUserSupport?page=0&size=10
 
-### Payer pour une tiers par un utilisateur
-POST http://localhost:8082/fee/update/1/fact1@gmail.com
-Content-Type: application/json
+### Payer pour une tiers par un utilisateur (OK)
+POST http://localhost:8082/fee/update/2/fact1@gmail.com
 
-{
-  "debtor": "fact1@gmail.com"
-}
-
-### Liste de factures payées pour une tiers par un utilisateur
-GET http://localhost:8082/fee/getFee/mail@mail.com
+### Liste de factures payées pour une tiers par un utilisateur (OK)
+GET http://localhost:8082/fee/findFeeByDebtor?debtor=fact1@gmail.com&page=0&size=10
 
 ### Générere un lien de paiment par un utilisateur (tu dois gerez ça côté front)
 GET http://localhost:8082/user/fees?phone=0723546744
@@ -49,10 +47,7 @@ GET http://localhost:8082/user/fees?phone=0723546744
 ### Soumettez une préoccupation par un utilisateur
 ### (Pas disponible aussi on doit le faire par mail)
 
-### Liste des agents supports
-GET http://localhost:8082/user/getAllUserSupport
-
-### Envoyer un message a un agent support
+### Envoyer un message a un agent support (OK)
 POST http://localhost:8082/user/sendMessage
 Content-Type: application/json
 
@@ -62,19 +57,19 @@ Content-Type: application/json
     "message":"blabla"
 }
 
-### Liste des messages échangés entre un agent support et un utilisateur
-GET http://localhost:8082/user/messages?sender=fact5@gmail.com&receipt=fact2@gmail.com
+### Liste des messages échangés entre un agent support et un utilisateur (AJOUTER UNE PAGINATION)
+GET http://localhost:8082/user/messages?sender=fact5@gmail.com&receipt=fact1@gmail.com
 
 ### Changer la photo de profil d'un itilisatuur
 ### (Pas disponible)
 
-### Changer les informations d'un utilisatuur
+### Changer les informations d'un utilisatuur (Renvoyez du JSON)
 POST http://localhost:8082/user/update/1
 Content-Type: application/x-www-form-urlencoded
 
 firstname=meless&lastname=meless&email=meless@mail.com&phone=0707359590&index=224
 
-### Inscription d'un nouvel utilisatuur
+### Inscription d'un nouvel utilisatuur (OK)
 POST http://localhost:8082/user/add
 Content-Type: application/json
 
@@ -88,3 +83,40 @@ Content-Type: application/json
   "street": "azito",
   "password":"1234567890"
 }
+
+### Liste des facturiers (disponible à prochaine mise à jour)
+GET http://localhost:8082/user/listOfUsersOperator
+
+### Obtenir la liste des factures par numéro d'identifiant du client(010345768998761) (OK)
+GET http://localhost:8082/fee/findAllFeeByUser?feeId=010345768998761
+
+### Obtenir une facture par son identifiant (prochaine mis à jour)
+
+### modifier mot de passe (prochaine mis à jour)
+
+### téléchargement de reçu (prochaine mis à jour)
+
+### Rechercher une facture par date ou par l'identifiant de la facture
+GET http://localhost:8082/fee/searchByFeeIdOrPaymentDate?date=2023-04-18
+
+### Recherche par facturier, status de la facture, date de debut et de fin (prochaine mis à jour)
+
+### --- ESPACE FACTURIER ---
+
+### total des montants de factures mensuel pour un facturier
+
+### nombre des factures mensuelles payées
+
+### nombre des factures en attentes de payement
+
+### liste des factures payées pour le facturier connecté
+
+### liste des factures chargées
+
+### chargement de factures par le facturier (fichier excel)
+
+### --- ESPACE ADMIN ---
+
+### requête de creation d'un compte facturier
+
+

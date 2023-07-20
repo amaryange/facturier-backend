@@ -31,7 +31,7 @@ public class FeeService {
         return feeRepository.save(fee);
     }
 
-    public Fee updateFee(@PathVariable Long id,@RequestBody String debtor){
+    public Fee updateFee(@PathVariable Long id,@PathVariable String debtor){
         Optional<Fee> optionalFee = feeRepository.findById(id);
         if (optionalFee.isPresent()) {
             Fee existingFee = optionalFee.get();

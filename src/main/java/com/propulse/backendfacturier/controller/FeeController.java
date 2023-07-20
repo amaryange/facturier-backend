@@ -103,8 +103,8 @@ public class FeeController {
     }
 
     @PreAuthorize("hasAuthority('User')")
-    @PostMapping("/update/{id}")
-    public Fee completedFee(@PathVariable Long id,@RequestBody String debtor){
+    @PostMapping("/update/{id}/{debtor}")
+    public Fee completedFee(@PathVariable Long id,@PathVariable String debtor){
         return feeService.updateFee(id, debtor);
     }
     /*
