@@ -4,15 +4,22 @@ import com.propulse.backendfacturier.entity.Fee;
 import com.propulse.backendfacturier.entity.Operator;
 import com.propulse.backendfacturier.service.FeeService;
 import com.propulse.backendfacturier.service.OperatorService;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.*;
 
 @RestController
@@ -205,6 +212,26 @@ public class FeeController {
         return ResponseEntity.ok(feePage);
     }
 
+    @GetMapping("/getAllFeeStatusFalseByOperator")
+    public ResponseEntity<Page<Map<String, Object>>> getAllFeeStatusFalseByOperator(
+            @RequestParam String role,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Map<String, Object>> feePage = feeService.getAllFeeStatusFalseByOperator(role, pageable);
+        return ResponseEntity.ok(feePage);
+    }
+
+    @GetMapping("/getAllFeeStatusTrueByOperator")
+    public ResponseEntity<Page<Map<String, Object>>> getAllFeeStatusTrueByOperator(
+            @RequestParam String role,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Map<String, Object>> feePage = feeService.getAllFeeStatusTrueByOperator(role, pageable);
+        return ResponseEntity.ok(feePage);
+    }
+
     /*
     @GetMapping("/searchByFeeIdOrPaymentDate")
     public List<Fee>searchByFeeIdOrPaymentDate(@RequestParam(value = "feeId", defaultValue = "") String feeId, @RequestParam(value = "date", defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") Date paymentDate){
@@ -223,6 +250,19 @@ public class FeeController {
         Page<Fee> feePage = feeService.searchByFeeIdOrPaymentDate(feeId, paymentDate, pageable);
         return ResponseEntity.ok(feePage);
     }
+    @GetMapping("/searchFeeByDateStatus")
+    public ResponseEntity<Page<Map<String, Object>>> searchFeeByDateStatus(
+            @RequestParam(required = false) String label,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate,
+            @RequestParam(required = false) Boolean status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Map<String, Object>> feePage = feeService.searchFeeByDateStatus(label, startDate, endDate, status, pageable);
+        return ResponseEntity.ok(feePage);
+    }
+
 
     @GetMapping("/numberOfFeeBuyThisYear")
     public Long numberOfFeeBuyThisYear(){
@@ -310,5 +350,87 @@ public class FeeController {
         Page<Fee> paidFeesPagePermonth = feeService.listOfFeePaidPerMonth(pageable);
         return ResponseEntity.ok(paidFeesPagePermonth);
     }
+
+    @PostMapping("/uploadInvoices")
+    public Map<String, Object> uploadInvoices(@RequestParam("file") MultipartFile file) throws IOException {
+        Map<String, Object> response = new HashMap<>();
+
+        if (file.isEmpty()) {
+            response.put("success", false);
+            response.put("message", "Veuillez sélectionner un fichier à télécharger.");
+            return response;
+        }
+
+        List<Fee> invoices = feeService.parseInvoicesFromExcel(file);
+
+        // Traitez les factures ici (par exemple, enregistrez-les dans la base de données).
+
+        response.put("success", true);
+        response.put("message", "Téléchargement des factures réussi.");
+        response.put("numberOfInvoices", invoices.size());
+
+        return response;
+    }
+
+    /*
+    @GetMapping("/downloadInvoices")
+    public Map<String, Object> downloadInvoices(@RequestParam("invoiceId") long invoiceId) {
+        Map<String, Object> response = new HashMap<>();
+
+        String filePath = "src/main/resources/templates/receipt.jrxml";
+
+        Fee invoice = feeService.findFeeById(invoiceId);
+
+        // Traitez les factures ici (par exemple, enregistrez-les dans la base de données).
+
+        response.put("firstname", invoice.getOperator().getName());
+        response.put("lastname", invoice.getPhone());
+        response.put("facture", invoice.getFeeId());
+
+        return response;
+    }
+
+     */
+
+    @GetMapping("/downloadInvoices")
+    public ResponseEntity<byte[]> downloadInvoices(@RequestParam("invoiceId") long invoiceId) throws JRException {
+
+        Fee invoice = feeService.findFeeById(invoiceId);
+
+        // Créez un HashMap pour les paramètres du rapport.
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("firstname", invoice.getOperator().getName());
+        parameters.put("lastname", invoice.getPhone());
+        parameters.put("facture", invoice.getFeeId());
+
+        // Chargez le modèle .jrxml à partir du fichier.
+        String jrxmlFilePath = "src/main/resources/templates/receipt.jrxml";
+        JasperReport jasperReport = JasperCompileManager.compileReport(jrxmlFilePath);
+
+        // Remplissez le rapport avec les paramètres du rapport et les données de la facture (dataSource est facultatif car les données de la facture sont déjà définies dans les paramètres).
+        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, new JREmptyDataSource());
+
+        // Exportez le rapport au format PDF.
+        byte[] pdfBytes;
+        try {
+            pdfBytes = JasperExportManager.exportReportToPdf(jasperPrint);
+        } catch (JRException e) {
+            // Gérer l'erreur ici si nécessaire.
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+        // Spécifiez les en-têtes de la réponse pour le téléchargement du fichier PDF.
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "invoice.pdf");
+
+        // Renvoie la réponse avec le contenu du fichier PDF en tant que tableau d'octets.
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
+    }
+
+
 
 }

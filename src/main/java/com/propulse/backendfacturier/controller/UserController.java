@@ -92,6 +92,15 @@ public class UserController {
         return userService.updateUser(id, lastname, firstname, index, phone, email);
     }
 
+    //@PreAuthorize("hasAuthority('User')")
+    @PostMapping("/updatePassword/{id}")
+    public Map<String, Object> updatePasswordUser(@PathVariable Long id,@RequestBody String password){
+        userService.updatePasswordUser(id, password);
+        Map<String, Object> map = new HashMap<>();
+        map.put("message", "Mot de passe changé avec succès");
+        return map;
+    }
+
     @GetMapping("/getAllUsers")
     public ResponseEntity<Page<Map<String, Object>>> getAllUsers(Pageable pageable) {
         Page<Map<String, Object>> usersPage = userService.findAllUsers(pageable);

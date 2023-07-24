@@ -18,6 +18,7 @@ public interface FeeRepository extends JpaRepository<Fee, Long> {
      */
 
     Page<Fee> findFeeByPhone(String phone, Pageable pageable);
+    Fee findFeeById(long id);
     /*
     @Query(value = "SELECT * FROM fee f WHERE f.phone = :phone AND f.fee_status = false ", nativeQuery = true)
     List<Fee> findFeeByPhoneAndFeeStatus(String phone);
@@ -171,6 +172,28 @@ public interface FeeRepository extends JpaRepository<Fee, Long> {
                     "WHERE o.label = :role")
     Page<Map<String, Object>> getAllFeeByOperator(String role, Pageable pageable);
 
+    // nombre de facture en attente pour le facturier
+    @Query(value = "SELECT f.feeId AS feeId, f.paymentDate AS paymentDate, f.periodFee AS periodFee, f.price AS price, f.phone AS phone " +
+            "FROM Fee f " +
+            "JOIN f.operator o " +
+            "WHERE o.label = :role AND f.feeStatus = FALSE ",
+            countQuery = "SELECT COUNT(f) " +
+                    "FROM Fee f " +
+                    "JOIN f.operator o " +
+                    "WHERE o.label = :role AND f.feeStatus = FALSE")
+    Page<Map<String, Object>> getAllFeeStatusFalseByOperator(String role, Pageable pageable);
+
+
+    // nombre de facture payées pour le facturier
+    @Query(value = "SELECT f.feeId AS feeId, f.paymentDate AS paymentDate, f.periodFee AS periodFee, f.price AS price, f.phone AS phone " +
+            "FROM Fee f " +
+            "JOIN f.operator o " +
+            "WHERE o.label = :role AND f.feeStatus = TRUE ",
+            countQuery = "SELECT COUNT(f) " +
+                    "FROM Fee f " +
+                    "JOIN f.operator o " +
+                    "WHERE o.label = :role AND f.feeStatus = TRUE")
+    Page<Map<String, Object>> getAllFeeStatusTrueByOperator(String role, Pageable pageable);
 
 
     // Faire une recherche sur des factures
@@ -184,6 +207,14 @@ public interface FeeRepository extends JpaRepository<Fee, Long> {
             countQuery = "SELECT COUNT(f) FROM Fee f WHERE f.feeId = :feeId OR f.paymentDate = :paymentDate")
     Page<Fee> searchByFeeIdOrPaymentDate(String feeId, @DateTimeFormat(pattern = "yyyy-MM-dd") Date paymentDate, Pageable pageable);
 
+    // Recherche par facturier, status de la facture, date de debut et de fin
+    @Query(value = "SELECT f.feeStatus AS feeStatus, f.paymentDate AS paymentDate, f.price AS price, f.periodFee AS periodFee, f.limitDate AS limitDate," +
+            " f.feeId AS feeId, f.operator.id AS idOperator, f.operator.name AS nameOperator, f.operator.label AS labelOperator " +
+            "FROM Fee f WHERE f.operator.label = :label OR (f.periodFee BETWEEN :startDate AND :endDate) OR f.feeStatus = :status",
+            countQuery = "SELECT COUNT(f.id) FROM Fee f WHERE f.operator.label = :label OR (f.periodFee BETWEEN :startDate AND :endDate) OR f.feeStatus = :status ")
+    Page<Map<String, Object>> searchFeeByDateStatus(String label, @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+                              @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate, Boolean status,
+                              Pageable pageable);
 
     // Nombre de factures payées sur l'année en cours
     @Query("SELECT COUNT(f) FROM Fee f WHERE f.feeStatus = true AND YEAR(f.paymentDate) = YEAR(CURRENT_DATE())")

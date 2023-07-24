@@ -37,7 +37,11 @@ public class Fee {
     @JsonProperty
     private String debtor;
     @ManyToOne
-    @JsonBackReference
+    @JsonIgnore // Utiliser @JsonIgnore au lieu de @JsonBackReference
     private Operator operator;
+
+    public boolean getFeeStatus(){
+        return this.feeStatus;
+    }
 
 }

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -123,6 +124,20 @@ public class UserService {
         }
     }
 
+    public User updatePasswordUser(@PathVariable Long id,@RequestBody String newPassword){
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isPresent()) {
+            User existingUser = optionalUser.get();
+            String encodedPassword = passwordEncoder.encode(newPassword);
+            existingUser.setPassword(encodedPassword);
+            // Mettez à jour tous les autres champs que vous souhaitez modifier
+            User savedUser = userRepository.save(existingUser);
+            return savedUser;
+        } else {
+            return null;
+        }
+    }
+
     public void addRoleToUser(User user, Role role) {
         user.getRoles().add(role);
         role.getUsers().add(user);
@@ -157,6 +172,7 @@ public class UserService {
     }
 
     public User loadUserByEmail(String email){ return userRepository.findUserByEmail(email); }
+    public User loadUserByPhoneNumber(String phone){ return userRepository.findUserByPhone(phone); }
 
     public List<String> getUserInfoByEmail(String email){ return userRepository.getUserInfoByEmail(email); }
 

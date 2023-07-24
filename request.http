@@ -100,16 +100,24 @@ GET http://localhost:8082/fee/findAllFeeByUser?feeId=010345768998761
 GET http://localhost:8082/fee/searchByFeeIdOrPaymentDate?date=2023-04-18
 
 ### Recherche par facturier, status de la facture, date de debut et de fin (prochaine mis à jour)
+GET http://localhost:8082/fee/searchFeeByDateStatus?startDate=2023-06-03 &endDate=2023-07-03&status=0&label=CIE
 
 ### --- ESPACE FACTURIER ---
 
 ### total des montants de factures mensuel pour un facturier
+GET http://localhost:8082/fee/getAllFeeByOperator?role=CIE
 
-### nombre des factures mensuelles payées
+### nombre des factures mensuelles payées (mois en cours)
+GET http://localhost:8082/fee/getNumberOfInvoicesForCurrentMonth?role=CIE
+
+### nombre des factures mensuelles payées (au choix le mois et l'année sont obligatoire)
+GET http://localhost:8082/fee/getNumberOfInvoicesForMonthAndYear?month=4&year=2023&role=CIE
 
 ### nombre des factures en attentes de payement
+GET http://localhost:8082/fee/getAllFeeStatusFalseByOperator?role=SODECI&page=0&size=10
 
 ### liste des factures payées pour le facturier connecté
+GET http://localhost:8082/fee/getAllFeeStatusTrueByOperator?role=SODECI&page=0&size=10
 
 ### liste des factures chargées
 
@@ -117,6 +125,18 @@ GET http://localhost:8082/fee/searchByFeeIdOrPaymentDate?date=2023-04-18
 
 ### --- ESPACE ADMIN ---
 
-### requête de creation d'un compte facturier
+### requête de creation d'un compte facturier ou support
+POST http://localhost:8082/user/add-support-or-biller
+Content-Type: application/json
 
+{
+    "firstname": "meless",
+    "lastname": "meless",
+    "email": "meless@mail.com",
+    "phone": "0707359590",
+    "country": 1,
+    "city": 1,
+    "street": "azito",
+    "password":"1234567890"
+}
 
