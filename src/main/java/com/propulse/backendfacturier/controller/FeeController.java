@@ -109,6 +109,39 @@ public class FeeController {
         return ResponseEntity.ok(feePage);
     }
 
+    @GetMapping("/findAllBills")
+    public ResponseEntity<Page<Map<String, Object>>> findAllBills(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Map<String, Object>> feePage = feeService.findAllBills(pageable);
+        return ResponseEntity.ok(feePage);
+    }
+
+    @GetMapping("/findFeeByBillNumberFalseBetweenDate")
+    public ResponseEntity<Page<Map<String, Object>>> findFeeByBillNumberFalseBetweenDate(
+            @RequestParam String phone,
+            @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+            @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Map<String, Object>> feePage = feeService.findFeeByBillNumberFalseBetweenDate(phone, startDate, endDate, pageable);
+        return ResponseEntity.ok(feePage);
+    }
+
+    @GetMapping("/findFeeByBillNumberTrueBetweenDate")
+    public ResponseEntity<Page<Map<String, Object>>> findFeeByBillNumberTrueBetweenDate(
+            @RequestParam String phone,
+            @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+            @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Map<String, Object>> feePage = feeService.findFeeByBillNumberTrueBetweenDate(phone, startDate, endDate, pageable);
+        return ResponseEntity.ok(feePage);
+    }
+
     @PreAuthorize("hasAuthority('User')")
     @PostMapping("/update/{id}/{debtor}")
     public Fee completedFee(@PathVariable Long id,@PathVariable String debtor){
@@ -393,15 +426,16 @@ public class FeeController {
      */
 
     @GetMapping("/downloadInvoices")
-    public ResponseEntity<byte[]> downloadInvoices(@RequestParam("invoiceId") long invoiceId) throws JRException {
+    public ResponseEntity<byte[]> downloadInvoices(@RequestParam("numberBill") String numberBill) throws JRException {
 
-        Fee invoice = feeService.findFeeById(invoiceId);
+        Fee invoice = feeService.findFeeByNumberBill(numberBill);
 
         // Créez un HashMap pour les paramètres du rapport.
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("firstname", invoice.getOperator().getName());
+        parameters.put("firstname", invoice.getOperator().getLabel());
         parameters.put("lastname", invoice.getPhone());
         parameters.put("facture", invoice.getFeeId());
+        parameters.put("price", invoice.getPrice());
 
         // Chargez le modèle .jrxml à partir du fichier.
         String jrxmlFilePath = "src/main/resources/templates/receipt.jrxml";

@@ -42,6 +42,10 @@ public class FeeService {
         return feeRepository.findFeeById(id);
     }
 
+    public Fee findFeeByNumberBill(String numberBill){
+        return feeRepository.findFeeByNumberBill(numberBill);
+    }
+
     public Fee updateFee(@PathVariable Long id,@PathVariable String debtor){
         Optional<Fee> optionalFee = feeRepository.findById(id);
         if (optionalFee.isPresent()) {
@@ -57,6 +61,25 @@ public class FeeService {
             return null;
         }
     }
+
+    public Page<Map<String, Object>> findAllBills(Pageable pageable) {
+        return feeRepository.findAllBills(pageable);
+    }
+
+    public Page<Map<String, Object>> findFeeByBillNumberFalseBetweenDate(String phone,
+                                                            @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+                                                           @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate,
+                                                           Pageable pageable) {
+        return feeRepository.findFeeByBillNumberFalseBetweenDate(phone, startDate, endDate, pageable);
+    }
+
+    public Page<Map<String, Object>> findFeeByBillNumberTrueBetweenDate(String phone,
+                                                                        @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+                                                                         @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate,
+                                                                         Pageable pageable) {
+        return feeRepository.findFeeByBillNumberTrueBetweenDate(phone, startDate, endDate, pageable);
+    }
+
 
     /*
     public List<Fee> findFeeByPhone(@RequestParam(name = "phone", defaultValue = "")String phone){
@@ -74,6 +97,10 @@ public class FeeService {
         return feeRepository.findFeeByPhoneAndFeeStatus(phone);
     }
      */
+
+    public Page<Map<String, Object>> findFeeByBillNumberFalse(String billNumber, Pageable pageable) {
+        return feeRepository.findFeeByBillNumberFalse(billNumber, pageable);
+    }
 
     public Page<Map<String, Object>> findFeeByPhoneAndFeeStatus(String phone, Pageable pageable) {
         return feeRepository.findFeeByPhoneAndFeeStatus(phone, pageable);
@@ -366,6 +393,13 @@ public class FeeService {
                     // Gérer le cas où l'opérateur avec l'identifiant spécifié n'a pas été trouvé.
                     // Par exemple, vous pouvez générer une exception ou définir une valeur par défaut.
                 }
+            }
+
+            Cell cell1 = row.getCell(7); // Septième colonne
+            if (cell1.getCellType() == CellType.NUMERIC) {
+                invoice.setNumberBill(String.valueOf((long) cell1.getNumericCellValue()));
+            } else if (cell1.getCellType() == CellType.STRING) {
+                invoice.setFeeId(cell1.getStringCellValue());
             }
 
             /*

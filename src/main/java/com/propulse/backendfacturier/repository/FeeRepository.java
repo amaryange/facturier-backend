@@ -19,15 +19,46 @@ public interface FeeRepository extends JpaRepository<Fee, Long> {
 
     Page<Fee> findFeeByPhone(String phone, Pageable pageable);
     Fee findFeeById(long id);
+    Fee findFeeByNumberBill(String numberBill);
     /*
     @Query(value = "SELECT * FROM fee f WHERE f.phone = :phone AND f.fee_status = false ", nativeQuery = true)
     List<Fee> findFeeByPhoneAndFeeStatus(String phone);
 
      */
 
+    // Obtenir toutes les factures
+    @Query(value = "SELECT f.feeId AS feeId, f.periodFee AS periodFee, f.limitDate AS limitDate, f.price AS price, " +
+            " f.phone AS phone, f.debtor AS debtor, f.paymentDate AS paymentDate, f.operator.name AS name , f.operator.label AS label," +
+            " f.operator.id AS idPicture, f.numberBill AS numberBill FROM Fee f")
+    Page<Map<String, Object>> findAllBills(Pageable pageable);
+
+    // obtenir les factures qui n'ont pas été payé entre deux dates
+    @Query(value = "SELECT f.feeId AS feeId, f.periodFee AS periodFee, f.limitDate AS limitDate, f.price AS price, " +
+            "f.phone AS phone, f.debtor AS debtor, f.paymentDate AS paymentDate, f.operator.name AS name , f.operator.label AS label, " +
+            "f.operator.id AS idPicture, f.numberBill AS numberBill FROM Fee f WHERE f.phone =:phone AND (f.periodFee BETWEEN :startDate AND :endDate) AND f.feeStatus = false")
+    Page<Map<String, Object>> findFeeByBillNumberFalseBetweenDate(String phone, Date startDate, Date endDate, Pageable pageable);
+
+    // obtenir les factures qui ont été payé entre deux dates
+    @Query(value = "SELECT f.feeId AS feeId, f.periodFee AS periodFee, f.limitDate AS limitDate, f.price AS price, " +
+            "f.phone AS phone, f.debtor AS debtor, f.paymentDate AS paymentDate, f.operator.name AS name , f.operator.label AS label, " +
+            "f.operator.id AS idPicture, f.numberBill AS numberBill FROM Fee f WHERE f.phone =:phone AND (f.periodFee BETWEEN :startDate AND :endDate) AND f.feeStatus = true ")
+    Page<Map<String, Object>> findFeeByBillNumberTrueBetweenDate(String phone, Date startDate, Date endDate, Pageable pageable);
+
+    // obtenir la facture payée grâce au numéro de la facture
+    @Query(value = "SELECT f.feeId AS feeId, f.periodFee AS periodFee, f.limitDate AS limitDate, f.price AS price, " +
+            "f.phone AS phone, f.debtor AS debtor, f.paymentDate AS paymentDate, f.operator.name AS name , f.operator.label AS label, " +
+            "f.operator.id AS idPicture, f.numberBill AS numberBill FROM Fee f WHERE f.numberBill = :billNumber AND f.feeStatus = true")
+    Page<Map<String, Object>> findFeeByBillNumberTrue(String billNumber, Pageable pageable);
+
+    // obtenir la facture non payée grâce au numéro de la facture
+    @Query(value = "SELECT f.feeId AS feeId, f.periodFee AS periodFee, f.limitDate AS limitDate, f.price AS price, " +
+            "f.phone AS phone, f.debtor AS debtor, f.paymentDate AS paymentDate, f.operator.name AS name , f.operator.label AS label, " +
+            "f.operator.id AS idPicture, f.numberBill AS numberBill FROM Fee f WHERE f.numberBill = :billNumber AND f.feeStatus = false")
+    Page<Map<String, Object>> findFeeByBillNumberFalse(String billNumber, Pageable pageable);
+
     @Query(value = "SELECT f.feeId AS feeId, f.periodFee AS periodFee, f.limitDate AS limitDate, f.price AS price, " +
             "f.phone AS phone, f.debtor AS debtor, f.paymentDate AS paymentDate, o.name AS name , o.label AS label, " +
-            "o.id AS idPicture FROM Fee f JOIN f.operator o WHERE f.phone = :phone AND f.feeStatus = false",
+            "o.id AS idPicture, f.numberBill AS numberBill FROM Fee f JOIN f.operator o WHERE f.phone = :phone AND f.feeStatus = false",
             countQuery = "SELECT COUNT(f) FROM Fee f WHERE f.phone = :phone AND f.feeStatus = false")
     Page<Map<String, Object>> findFeeByPhoneAndFeeStatus(String phone, Pageable pageable);
 
@@ -78,10 +109,10 @@ public interface FeeRepository extends JpaRepository<Fee, Long> {
 
      */
 
-    @Query(value = "SELECT f.debtor AS debtor, f.limit_date AS limitDate, f.payment_date AS paymentDate, f.period_fee AS periodFee, f.phone AS phone, f.price AS price, o.label AS label_operator, o.name AS name_operator " +
+    @Query(value = "SELECT f.debtor AS debtor, f.number_bill AS numberBill, f.limit_date AS limitDate, f.payment_date AS paymentDate, f.period_fee AS periodFee, f.phone AS phone, f.price AS price, o.label AS label_operator, o.name AS name_operator " +
             "FROM fee f, operator o " +
             "WHERE f.fee_status = false AND f.fee_id = :feeId AND o.id = f.id",
-            countQuery = "SELECT COUNT(f.debtor) " +
+            countQuery = "SELECT COUNT(f.id) " +
                     "FROM fee f, operator o " +
                     "WHERE f.fee_status = false AND f.fee_id = :feeId AND o.id = f.id",
             nativeQuery = true)
@@ -162,7 +193,7 @@ public interface FeeRepository extends JpaRepository<Fee, Long> {
      */
 
     // Faire le listing des factures
-    @Query(value = "SELECT f.feeId AS feeId, f.paymentDate AS paymentDate, f.periodFee AS periodFee, f.price AS price, f.phone AS phone " +
+    @Query(value = "SELECT f.feeId AS feeId, f.paymentDate AS paymentDate, f.numberBill AS numberBill, f.periodFee AS periodFee, f.price AS price, f.phone AS phone " +
             "FROM Fee f " +
             "JOIN f.operator o " +
             "WHERE o.label = :role",
@@ -173,7 +204,7 @@ public interface FeeRepository extends JpaRepository<Fee, Long> {
     Page<Map<String, Object>> getAllFeeByOperator(String role, Pageable pageable);
 
     // nombre de facture en attente pour le facturier
-    @Query(value = "SELECT f.feeId AS feeId, f.paymentDate AS paymentDate, f.periodFee AS periodFee, f.price AS price, f.phone AS phone " +
+    @Query(value = "SELECT f.feeId AS feeId, f.numberBill AS numberBill, f.paymentDate AS paymentDate, f.periodFee AS periodFee, f.price AS price, f.phone AS phone " +
             "FROM Fee f " +
             "JOIN f.operator o " +
             "WHERE o.label = :role AND f.feeStatus = FALSE ",
@@ -185,7 +216,7 @@ public interface FeeRepository extends JpaRepository<Fee, Long> {
 
 
     // nombre de facture payées pour le facturier
-    @Query(value = "SELECT f.feeId AS feeId, f.paymentDate AS paymentDate, f.periodFee AS periodFee, f.price AS price, f.phone AS phone " +
+    @Query(value = "SELECT f.feeId AS feeId, f.numberBill AS numberBill, f.paymentDate AS paymentDate, f.periodFee AS periodFee, f.price AS price, f.phone AS phone " +
             "FROM Fee f " +
             "JOIN f.operator o " +
             "WHERE o.label = :role AND f.feeStatus = TRUE ",
@@ -208,7 +239,7 @@ public interface FeeRepository extends JpaRepository<Fee, Long> {
     Page<Fee> searchByFeeIdOrPaymentDate(String feeId, @DateTimeFormat(pattern = "yyyy-MM-dd") Date paymentDate, Pageable pageable);
 
     // Recherche par facturier, status de la facture, date de debut et de fin
-    @Query(value = "SELECT f.feeStatus AS feeStatus, f.paymentDate AS paymentDate, f.price AS price, f.periodFee AS periodFee, f.limitDate AS limitDate," +
+    @Query(value = "SELECT f.feeStatus AS feeStatus, f.numberBill AS numberBill, f.paymentDate AS paymentDate, f.price AS price, f.periodFee AS periodFee, f.limitDate AS limitDate," +
             " f.feeId AS feeId, f.operator.id AS idOperator, f.operator.name AS nameOperator, f.operator.label AS labelOperator " +
             "FROM Fee f WHERE f.operator.label = :label OR (f.periodFee BETWEEN :startDate AND :endDate) OR f.feeStatus = :status",
             countQuery = "SELECT COUNT(f.id) FROM Fee f WHERE f.operator.label = :label OR (f.periodFee BETWEEN :startDate AND :endDate) OR f.feeStatus = :status ")
@@ -248,7 +279,7 @@ public interface FeeRepository extends JpaRepository<Fee, Long> {
      */
 
     // Liste des clients n’ayant pas payé leur facture apres la date limite
-    @Query("SELECT f.feeId AS feeID, f.price AS price, f.limitDate AS limitDate, u.lastname AS lastname, u.firstname AS firstname, u.email AS email, u.phone AS phone, f.feeStatus AS feeStatus FROM Fee f " +
+    @Query("SELECT f.feeId AS feeID, f.numberBill AS numberBill, f.price AS price, f.limitDate AS limitDate, u.lastname AS lastname, u.firstname AS firstname, u.email AS email, u.phone AS phone, f.feeStatus AS feeStatus FROM Fee f " +
             "INNER JOIN User u ON f.phone = u.phone " +
             "WHERE f.feeStatus = false AND f.limitDate < CURRENT_DATE()")
     Page<Map<String, Object>> findUsersWithUnpaidFees(Pageable pageable);
@@ -275,7 +306,5 @@ public interface FeeRepository extends JpaRepository<Fee, Long> {
     // nombre de factures non payées par mois
     @Query("SELECT COUNT(f) FROM Fee f WHERE f.feeStatus = true AND MONTH(f.limitDate) < MONTH(CURRENT_DATE()) ")
     Long numberOfFeePaidPerMonth();
-
-
 
 }

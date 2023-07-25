@@ -5,6 +5,7 @@ import com.propulse.backendfacturier.entity.Message;
 import com.propulse.backendfacturier.entity.Role;
 import com.propulse.backendfacturier.entity.User;
 import com.propulse.backendfacturier.repository.UserRepository;
+import com.propulse.backendfacturier.requestEntity.UserRequest;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,27 +96,24 @@ public class UserService {
         String password = generatePassword();
         String encodedPassword = passwordEncoder.encode(password);
         user.setPassword(encodedPassword);
-        //String userName = user.getLastname();
-        //String userEmail = user.getEmail();
-        //sendEmail(userEmail, "Mot de passe mesfactures.ci", "Bonjour " + userName + ", voici votre mot de passe : "+password);
+        //--------------------------------------------------------
+        String userName = user.getLastname();
+        String userEmail = user.getEmail();
+        sendEmail(userEmail, "Mot de passe mesfactures.ci", "Bonjour " + userName + ", voici votre mot de passe : "+password);
+        //--------------------------------------------------------
         addRoleToUser(user, role);
         return userRepository.save(user);
     }
 
-    public User updateUser(@PathVariable Long id,@RequestBody String lastname,
-                          @RequestBody String firstname,
-                          @RequestBody String index,
-                          @RequestBody String phone,
-                          @RequestBody String email
-                          ){
+    public User updateUser(@PathVariable Long id,@RequestBody UserRequest userRequest){
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isPresent()) {
             User existingUser = optionalUser.get();
-            existingUser.setEmail(email);
-            existingUser.setLastname(lastname);
-            existingUser.setFirstname(firstname);
-            existingUser.setIndex(index);
-            existingUser.setPhone(phone);
+            existingUser.setEmail(userRequest.getEmail());
+            existingUser.setLastname(userRequest.getLastname());
+            existingUser.setFirstname(userRequest.getFirstname());
+            existingUser.setIndex(userRequest.getIndex());
+            existingUser.setPhone(userRequest.getPhone());
             // mettez à jour tous les autres champs que vous souhaitez modifier
             User savedFee = userRepository.save(existingUser);
             return savedFee;

@@ -9,6 +9,7 @@ import com.propulse.backendfacturier.dto.UserDTO;
 import com.propulse.backendfacturier.entity.*;
 import com.propulse.backendfacturier.helper.JWTHelper;
 import com.propulse.backendfacturier.repository.UserRepository;
+import com.propulse.backendfacturier.requestEntity.UserRequest;
 import com.propulse.backendfacturier.service.FeeService;
 import com.propulse.backendfacturier.service.MessageService;
 import com.propulse.backendfacturier.service.UserService;
@@ -84,12 +85,11 @@ public class UserController {
 
     @PreAuthorize("hasAuthority('User')")
     @PostMapping("/update/{id}")
-    public User updateUser(@PathVariable Long id,@RequestParam("lastname") String lastname,
-                           @RequestParam("firstname") String firstname,
-                           @RequestParam("index") String index,
-                           @RequestParam("phone") String phone,
-                           @RequestParam("email") String email){
-        return userService.updateUser(id, lastname, firstname, index, phone, email);
+    public Map<String, Object> updateUser(@PathVariable Long id,@RequestBody UserRequest userRequest){
+        userService.updateUser(id, userRequest);
+        Map<String, Object> map = new HashMap<>();
+        map.put("message", "Modification effectuer avec succès");
+        return map;
     }
 
     //@PreAuthorize("hasAuthority('User')")
@@ -217,6 +217,18 @@ public class UserController {
         Page<Map<String, Object>> feePage = feeService.findFeeByPhoneAndFeeStatus(phone, pageable);
         return ResponseEntity.ok(feePage);
     }
+
+    @GetMapping("/billNumberFalse")
+    public ResponseEntity<Page<Map<String, Object>>> findFeeByBillNumberFalse(
+            @RequestParam(name = "numberBill") String numberBill,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Map<String, Object>> feePage = feeService.findFeeByBillNumberFalse(numberBill, pageable);
+        return ResponseEntity.ok(feePage);
+    }
+
 
     @GetMapping("/fees/outstanding")
     public Long sumFeeByPhoneAndFeeStatus(@RequestParam(name = "phone", defaultValue = "")String phone) {

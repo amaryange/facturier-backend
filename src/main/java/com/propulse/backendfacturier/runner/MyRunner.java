@@ -113,6 +113,7 @@ public class MyRunner implements CommandLineRunner {
             fee.setPrice(35000);
             fee.setPhone("0723546741");
             fee.setFeeId("01034576899876"+i);
+            fee.setNumberBill("0103457689987624432"+i);
             fee.setOperator(operator);
             Date periodFee = new SimpleDateFormat("dd-MM-yyyy").parse("18-04-2023");
             fee.setPeriodFee(periodFee);
@@ -129,6 +130,7 @@ public class MyRunner implements CommandLineRunner {
             fee.setPrice(35000);
             fee.setPhone("0723546744");
             fee.setFeeId("01034576899876"+i);
+            fee.setNumberBill("0103457689987624454"+i);
             fee.setOperator(operator);
             Date periodFee = new SimpleDateFormat("dd-MM-yyyy").parse("18-04-2023");
             fee.setPeriodFee(periodFee);

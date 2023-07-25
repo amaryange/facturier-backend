@@ -11,8 +11,11 @@ GET http://localhost:8082/user/fees/month?phone=0723546744
 ### Total annuel du mantant des factures payées pour un utilisateur (OK)
 GET http://localhost:8082/user/fees/year?phone=0723546744
 
-### ajout de date de debut et une date de fin (A FAIRE)
+### ajout de date de debut et une date de fin (A FAIRE) (en fonction de la period de la facture)
+GET http://localhost:8082/fee/findFeeByBillNumberFalseBetweenDate?phone=0723546741&startDate=2023-03-01&endDate=2023-07-01
 
+### Trouver une facture graçe au numero de la facture
+GET http://localhost:8082/user/billNumberFalse?numberBill=01034576899876244320
 
 ### Total du mantant des toutes les factures payées pour un utilisateur (OK)
 GET http://localhost:8082/fee/countFeeByPerson/0723546741
@@ -60,14 +63,20 @@ Content-Type: application/json
 ### Liste des messages échangés entre un agent support et un utilisateur (AJOUTER UNE PAGINATION)
 GET http://localhost:8082/user/messages?sender=fact5@gmail.com&receipt=fact1@gmail.com
 
-### Changer la photo de profil d'un itilisatuur
+### Changer la photo de profil d'un utilisatuur
 ### (Pas disponible)
 
 ### Changer les informations d'un utilisatuur (Renvoyez du JSON)
 POST http://localhost:8082/user/update/1
-Content-Type: application/x-www-form-urlencoded
+Content-Type: application/json
 
-firstname=meless&lastname=meless&email=meless@mail.com&phone=0707359590&index=224
+{
+  "firstname": "meless",
+  "lastname": "meless",
+  "email": "meless@maile.com",
+  "phone": "0707359590",
+  "index": "224"
+}
 
 ### Inscription d'un nouvel utilisatuur (OK)
 POST http://localhost:8082/user/add
@@ -91,10 +100,12 @@ GET http://localhost:8082/user/listOfUsersOperator
 GET http://localhost:8082/fee/findAllFeeByUser?feeId=010345768998761
 
 ### Obtenir une facture par son identifiant (prochaine mis à jour)
+GET http://localhost:8082/fee/downloadInvoices?numberBill=01034576899876244541
 
 ### modifier mot de passe (prochaine mis à jour)
 
 ### téléchargement de reçu (prochaine mis à jour)
+GET http://localhost:8082/fee/downloadInvoices?numberBill=01034576899876244541
 
 ### Rechercher une facture par date ou par l'identifiant de la facture
 GET http://localhost:8082/fee/searchByFeeIdOrPaymentDate?date=2023-04-18
@@ -120,13 +131,15 @@ GET http://localhost:8082/fee/getAllFeeStatusFalseByOperator?role=SODECI&page=0&
 GET http://localhost:8082/fee/getAllFeeStatusTrueByOperator?role=SODECI&page=0&size=10
 
 ### liste des factures chargées
+GET http://localhost:8082/fee/findAllBills
 
 ### chargement de factures par le facturier (fichier excel)
+POST http://localhost:8082/fee/uploadInvoices?file=factures.xlsx
 
 ### --- ESPACE ADMIN ---
 
 ### requête de creation d'un compte facturier ou support
-POST http://localhost:8082/user/add-support-or-biller
+POST http://localhost:8082/user/add-support-or-biller?roleId=3
 Content-Type: application/json
 
 {
@@ -139,4 +152,6 @@ Content-Type: application/json
     "street": "azito",
     "password":"1234567890"
 }
+
+
 

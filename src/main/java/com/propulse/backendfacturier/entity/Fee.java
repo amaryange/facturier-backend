@@ -24,6 +24,9 @@ public class Fee {
     @JsonProperty
     private String feeId;
     @JsonProperty
+    @Column(unique = true)
+    private String numberBill;
+    @JsonProperty
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private Date periodFee;
     @JsonProperty
