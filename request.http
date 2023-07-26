@@ -36,7 +36,12 @@ GET http://localhost:8082/user/fees/number?phone=0723546741
 GET http://localhost:8082/user/getAllUserSupport?page=0&size=10
 
 ### Payer pour une tiers par un utilisateur (OK)
-POST http://localhost:8082/fee/update/2/fact1@gmail.com
+POST http://localhost:8082/fee/update/2
+Content-Type: application/json
+
+{
+    "mail":"fact1@gmail.com"
+}
 
 ### Liste de factures payées pour une tiers par un utilisateur (OK)
 GET http://localhost:8082/fee/findFeeByDebtor?debtor=fact1@gmail.com&page=0&size=10
@@ -49,6 +54,19 @@ GET http://localhost:8082/user/fees?phone=0723546744
 
 ### Soumettez une préoccupation par un utilisateur
 ### (Pas disponible aussi on doit le faire par mail)
+POST http://localhost:8082/user/sendReclamation?email=melessangekevin@gmail.com
+Content-Type: application/json
+
+{
+  "lastname":"meless",
+  "firstname":"meless",
+  "object":"Reclamation",
+  "idProblem":"Impossibilité de voir le reçu",
+  "idOperator":"CIE",
+  "message":"uhrfghkjdskfhgukdfkjgfhdkhukhgkuhuh"
+
+}
+
 
 ### Envoyer un message a un agent support (OK)
 POST http://localhost:8082/user/sendMessage
@@ -99,10 +117,16 @@ GET http://localhost:8082/user/listOfUsersOperator
 ### Obtenir la liste des factures par numéro d'identifiant du client(010345768998761) (OK)
 GET http://localhost:8082/fee/findAllFeeByUser?feeId=010345768998761
 
-### Obtenir une facture par son identifiant (prochaine mis à jour)
+### Obtenir une facture par son identifiant (prochaine mis à jour) -----------------------------
 GET http://localhost:8082/fee/downloadInvoices?numberBill=01034576899876244541
 
 ### modifier mot de passe (prochaine mis à jour)
+POST http://localhost:8082/user/updatePassword/1
+Content-Type: application/json
+
+{
+    "password":"1234567890"
+}
 
 ### téléchargement de reçu (prochaine mis à jour)
 GET http://localhost:8082/fee/downloadInvoices?numberBill=01034576899876244541

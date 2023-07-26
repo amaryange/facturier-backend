@@ -2,6 +2,7 @@ package com.propulse.backendfacturier.controller;
 
 import com.propulse.backendfacturier.entity.Fee;
 import com.propulse.backendfacturier.entity.Operator;
+import com.propulse.backendfacturier.requestEntity.Mail;
 import com.propulse.backendfacturier.service.FeeService;
 import com.propulse.backendfacturier.service.OperatorService;
 import net.sf.jasperreports.engine.*;
@@ -143,8 +144,8 @@ public class FeeController {
     }
 
     @PreAuthorize("hasAuthority('User')")
-    @PostMapping("/update/{id}/{debtor}")
-    public Fee completedFee(@PathVariable Long id,@PathVariable String debtor){
+    @PostMapping("/update/{id}")
+    public Fee completedFee(@PathVariable Long id,@RequestBody Mail debtor){
         return feeService.updateFee(id, debtor);
     }
     /*

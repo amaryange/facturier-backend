@@ -4,6 +4,7 @@ import com.propulse.backendfacturier.entity.Fee;
 import com.propulse.backendfacturier.entity.Operator;
 import com.propulse.backendfacturier.repository.FeeRepository;
 import com.propulse.backendfacturier.repository.OperatorRepository;
+import com.propulse.backendfacturier.requestEntity.Mail;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
@@ -46,17 +47,16 @@ public class FeeService {
         return feeRepository.findFeeByNumberBill(numberBill);
     }
 
-    public Fee updateFee(@PathVariable Long id,@PathVariable String debtor){
+    public Fee updateFee(@PathVariable Long id,@RequestBody Mail debtor){
         Optional<Fee> optionalFee = feeRepository.findById(id);
         if (optionalFee.isPresent()) {
             Fee existingFee = optionalFee.get();
             existingFee.setFeeStatus(true);
-            existingFee.setDebtor(debtor);
+            existingFee.setDebtor(debtor.getMail());
             Date currentDate = new Date();
             existingFee.setPaymentDate(currentDate);
             // mettez à jour tous les autres champs que vous souhaitez modifier
-            Fee savedFee = feeRepository.save(existingFee);
-            return savedFee;
+            return feeRepository.save(existingFee);
         } else {
             return null;
         }

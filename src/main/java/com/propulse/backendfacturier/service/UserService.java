@@ -5,6 +5,7 @@ import com.propulse.backendfacturier.entity.Message;
 import com.propulse.backendfacturier.entity.Role;
 import com.propulse.backendfacturier.entity.User;
 import com.propulse.backendfacturier.repository.UserRepository;
+import com.propulse.backendfacturier.requestEntity.Password;
 import com.propulse.backendfacturier.requestEntity.UserRequest;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -82,6 +83,19 @@ public class UserService {
         System.out.println("Mail envoyé.");
     }
 
+    public void sendEmailForReclamation(String from, String subject, String content) {
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(from);
+        message.setTo("meless@amary.dev");
+        message.setText(content);
+        message.setSubject(subject);
+
+        mailSender.send(message);
+
+        System.out.println("Mail envoyé.");
+    }
+
     public User addUser(@RequestBody User user){
         Role role = roleService.getOneRole(2L);
         String encodedPassword = passwordEncoder.encode(user.getPassword());
@@ -97,9 +111,9 @@ public class UserService {
         String encodedPassword = passwordEncoder.encode(password);
         user.setPassword(encodedPassword);
         //--------------------------------------------------------
-        String userName = user.getLastname();
-        String userEmail = user.getEmail();
-        sendEmail(userEmail, "Mot de passe mesfactures.ci", "Bonjour " + userName + ", voici votre mot de passe : "+password);
+        //String userName = user.getLastname();
+        //String userEmail = user.getEmail();
+        //sendEmail(userEmail, "Mot de passe mesfactures.ci", "Bonjour " + userName + ", voici votre mot de passe : "+password);
         //--------------------------------------------------------
         addRoleToUser(user, role);
         return userRepository.save(user);
@@ -122,11 +136,11 @@ public class UserService {
         }
     }
 
-    public User updatePasswordUser(@PathVariable Long id,@RequestBody String newPassword){
+    public User updatePasswordUser(@PathVariable Long id,@RequestBody Password newPassword){
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isPresent()) {
             User existingUser = optionalUser.get();
-            String encodedPassword = passwordEncoder.encode(newPassword);
+            String encodedPassword = passwordEncoder.encode(newPassword.getPassword());
             existingUser.setPassword(encodedPassword);
             // Mettez à jour tous les autres champs que vous souhaitez modifier
             User savedUser = userRepository.save(existingUser);

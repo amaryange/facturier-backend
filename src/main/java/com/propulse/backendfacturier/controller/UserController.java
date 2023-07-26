@@ -9,6 +9,8 @@ import com.propulse.backendfacturier.dto.UserDTO;
 import com.propulse.backendfacturier.entity.*;
 import com.propulse.backendfacturier.helper.JWTHelper;
 import com.propulse.backendfacturier.repository.UserRepository;
+import com.propulse.backendfacturier.requestEntity.MailRequest;
+import com.propulse.backendfacturier.requestEntity.Password;
 import com.propulse.backendfacturier.requestEntity.UserRequest;
 import com.propulse.backendfacturier.service.FeeService;
 import com.propulse.backendfacturier.service.MessageService;
@@ -83,6 +85,27 @@ public class UserController {
     }
      */
 
+    @PostMapping("/sendReclamation")
+    public Map<String, Object> sendReclamation(@RequestBody MailRequest mailRequest, @RequestParam String email) throws MessagingException {
+        User user = userService.loadUserByEmail(email);
+        if(user != null){
+            // Appel à la méthode sendEmail avec les arguments appropriés
+            userService.sendEmailForReclamation(user.getEmail(),
+                    mailRequest.getObject()+"("+mailRequest.getIdOperator()+")"+ " de " +mailRequest.getLastname()+" "+mailRequest.getFirstname()+" "+" concernant le facturier "+mailRequest.getIdProblem(),
+                    mailRequest.getMessage()
+            );
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("message", "Mail envoyé avec succès");
+            return map;
+        } else {
+            Map<String, Object> map = new HashMap<>();
+            map.put("message", "utilisateur non trouvé");
+            return map;
+        }
+
+    }
+
     @PreAuthorize("hasAuthority('User')")
     @PostMapping("/update/{id}")
     public Map<String, Object> updateUser(@PathVariable Long id,@RequestBody UserRequest userRequest){
@@ -94,10 +117,15 @@ public class UserController {
 
     //@PreAuthorize("hasAuthority('User')")
     @PostMapping("/updatePassword/{id}")
-    public Map<String, Object> updatePasswordUser(@PathVariable Long id,@RequestBody String password){
-        userService.updatePasswordUser(id, password);
+    public Map<String, Object> updatePasswordUser(@PathVariable Long id,@RequestBody Password password){
+        User user = userService.updatePasswordUser(id, password);
+        if(user != null){
+            Map<String, Object> map = new HashMap<>();
+            map.put("message", "Mot de passe changé avec succès");
+            return map;
+        }
         Map<String, Object> map = new HashMap<>();
-        map.put("message", "Mot de passe changé avec succès");
+        map.put("message", "Erreur le mot de passe n'a pas pu être changer");
         return map;
     }
 
