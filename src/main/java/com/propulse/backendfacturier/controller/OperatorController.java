@@ -7,6 +7,8 @@ import com.propulse.backendfacturier.service.CountryService;
 import com.propulse.backendfacturier.service.OperatorService;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -34,8 +36,8 @@ public class OperatorController {
     private OperatorRepository operatorRepository;
 
     @GetMapping("/all")
-    public List<Operator> getAllOperators(){
-        return operatorService.getAllOperators();
+    public Page<Map<String, Object>> getAllOperators(Pageable pageable){
+        return operatorService.getAllOperators(pageable);
     }
     @PreAuthorize("hasAuthority('User')")
     @PostMapping("/add-new")

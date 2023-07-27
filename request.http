@@ -177,5 +177,9 @@ Content-Type: application/json
     "password":"1234567890"
 }
 
+###--------------------------------
+GET http://localhost:8082/operator/all
+
+
 
 

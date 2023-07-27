@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -71,8 +73,8 @@ public class OperatorService {
 
     }
 
-    public List<Operator> getAllOperators(){
-        return operatorRepository.findAll();
+    public Page<Map<String, Object>> getAllOperators(Pageable pageable){
+        return operatorRepository.findAllOperators(pageable);
     }
 
     public Long numberOfOperatorInCurrentYear(){
