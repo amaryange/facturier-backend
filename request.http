@@ -36,11 +36,11 @@ GET http://localhost:8082/user/fees/number?phone=0723546741
 GET http://localhost:8082/user/getAllUserSupport?page=0&size=10
 
 ### Payer pour une tiers par un utilisateur (OK)
-POST http://localhost:8082/fee/update/2
+POST http://localhost:8082/fee/update/01034576899876244541
 Content-Type: application/json
 
 {
-    "mail":"fact1@gmail.com"
+    "phone":"0723546741"
 }
 
 ### Liste de factures payées pour une tiers par un utilisateur (OK)
