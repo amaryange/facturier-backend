@@ -123,7 +123,12 @@ public interface FeeRepository extends JpaRepository<Fee, Long> {
     List<Fee> findFeeByDebtor(String debtor);
 
      */
-    Page<Fee> findFeeByDebtor(String debtor, Pageable pageable);
+    @Query(value = "SELECT f.feeStatus as feeStatus, f.phone as phone, f.paymentDate as paymentDate, f.debtor as debtor, f.limitDate as limitDate, f.periodFee as periodFee, f.feeId as feeId, " +
+            " f.price as price, f.numberBill as numberBill, f.id as id, u.firstname as firstnameTiers, u.lastname as lastnameTiers " +
+            " FROM Fee f " +
+            " JOIN User u ON f.phone = u.phone "  +
+            "WHERE f.debtor =:debtor AND f.feeStatus=TRUE ")
+    Page<Map<String, Object>> findFeeByDebtor(String debtor, Pageable pageable);
 
     //-----------------------------------------------------------------------------------
 

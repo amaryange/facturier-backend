@@ -160,12 +160,12 @@ public class FeeController {
 
     @PreAuthorize("hasAuthority('User')")
     @GetMapping("/findFeeByDebtor")
-    public ResponseEntity<Page<Fee>> findFeeByDebtor(
+    public ResponseEntity<Page<Map<String, Object>>> findFeeByDebtor(
             @RequestParam String debtor,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Fee> feePage = feeService.findFeeByDebtor(debtor, pageable);
+        Page<Map<String, Object>> feePage = feeService.findFeeByDebtor(debtor, pageable);
         return ResponseEntity.ok(feePage);
     }
 

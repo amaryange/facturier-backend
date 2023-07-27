@@ -162,7 +162,7 @@ public class FeeService {
     }
 
      */
-    public Page<Fee> findFeeByDebtor(String debtor, Pageable pageable) {
+    public Page<Map<String, Object>> findFeeByDebtor(String debtor, Pageable pageable) {
         return feeRepository.findFeeByDebtor(debtor, pageable);
     }
 
