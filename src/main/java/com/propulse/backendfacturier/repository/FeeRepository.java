@@ -73,10 +73,10 @@ public interface FeeRepository extends JpaRepository<Fee, Long> {
 
      */
 
-    @Query(value = "SELECT * FROM fee f WHERE f.phone = :phone AND f.fee_status = true",
-            countQuery = "SELECT COUNT(*) FROM fee f WHERE f.phone = :phone AND f.fee_status = true",
-            nativeQuery = true)
-    Page<Fee> findFeeByPhoneAndFeeStatusTrue(String phone, Pageable pageable);
+    @Query(value = "SELECT f.periodFee AS periodFee, f.limitDate AS limitDate, f.feeStatus AS feeStatus, f.numberBill as numberBill, f.feeId as feeId, f.price as price, f.debtor as debtor, f.paymentDate as paymentDate " +
+            " FROM Fee f WHERE f.phone = :phone AND f.feeStatus = true",
+            countQuery = "SELECT COUNT(*) FROM Fee f WHERE f.phone = :phone AND f.feeStatus = true")
+    Page<Map<String, Object>> findFeeByPhoneAndFeeStatusTrue(String phone, Pageable pageable);
 
     // ### Nombre de factures payées pour un utilisateur
     @Query(value = "SELECT COUNT(*) AS number_factures_payes FROM fee f WHERE f.phone = :phone AND f.fee_status = true ", nativeQuery = true)

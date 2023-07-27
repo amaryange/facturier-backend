@@ -118,7 +118,7 @@ public class FeeService {
 
      */
 
-    public Page<Fee> findFeeByPhoneAndFeeStatusTrue(String phone, Pageable pageable) {
+    public Page<Map<String, Object>> findFeeByPhoneAndFeeStatusTrue(String phone, Pageable pageable) {
         return feeRepository.findFeeByPhoneAndFeeStatusTrue(phone, pageable);
     }
 

@@ -44,7 +44,7 @@ Content-Type: application/json
 }
 
 ### Liste de factures payées pour une tiers par un utilisateur (OK)
-GET http://localhost:8082/fee/findFeeByDebtor?debtor=fact1@gmail.com&page=0&size=10
+GET http://localhost:8082/fee/findFeeByDebtor?debtor=0723546741&page=0&size=10
 
 ### Générere un lien de paiment par un utilisateur (tu dois gerez ça côté front)
 GET http://localhost:8082/user/fees?phone=0723546744

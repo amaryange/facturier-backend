@@ -291,12 +291,12 @@ public class UserController {
      */
 
     @GetMapping("/fees/true")
-    public ResponseEntity<Page<Fee>> findFeeByPhoneTrue(
+    public ResponseEntity<Page<Map<String, Object>>> findFeeByPhoneTrue(
             @RequestParam String phone,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Fee> feePage = feeService.findFeeByPhoneAndFeeStatusTrue(phone, pageable);
+        Page<Map<String, Object>> feePage = feeService.findFeeByPhoneAndFeeStatusTrue(phone, pageable);
         return ResponseEntity.ok(feePage);
     }
 
