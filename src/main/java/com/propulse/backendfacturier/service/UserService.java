@@ -207,4 +207,25 @@ public class UserService {
         return userRepository.listOfUsersOperator(pageable);
     }
 
+    public Long numberOfPayingUsers(){
+        return userRepository.numberOfPayingUsers();
+    }
+
+    public Long numberOfActivatedUser(){
+        return userRepository.numberOfActivatedUser();
+    }
+
+    public Long numberOfInactivatedUser(){
+        return userRepository.numberOfInactivatedUser();
+    }
+
+    public Long numberOfUser(){
+        return userRepository.numberOfUser();
+    }
+
+    public Page<Map<String, Object>> listOfCustomer(Pageable pageable) {
+        return userRepository.listOfCustomer(pageable);
+    }
+
+
 }

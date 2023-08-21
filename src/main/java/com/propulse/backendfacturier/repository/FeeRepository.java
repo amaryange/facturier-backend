@@ -152,7 +152,7 @@ public interface FeeRepository extends JpaRepository<Fee, Long> {
             "FROM fee f " +
             "WHERE f.period_fee >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH) AND f.phone = :phone " +
             "AND f.period_fee <= CURDATE() ", nativeQuery = true)
-    List<Fee> getFeesByCurrentDate(String phone);
+    List<Fee> getFeesByCURRENT_DATE(String phone);
      */
 
     // Liste des factures des trois derniers mois.
@@ -182,11 +182,11 @@ public interface FeeRepository extends JpaRepository<Fee, Long> {
 
     // Faire le compte des factures pour le mois en cours
     @Query(value = "SELECT COUNT(f) FROM Fee f JOIN f.operator o " +
-            "WHERE MONTH(f.periodFee) = MONTH(CURRENT_DATE()) AND YEAR(f.periodFee) = YEAR(CURRENT_DATE()) AND o.label = :role ")
+            "WHERE MONTH(f.periodFee) = MONTH(CURRENT_DATE()) AND YEAR(f.periodFee) = YEAR(CURRENT_DATE()) AND o.label = :role AND f.feeStatus= true ")
     Long getNumberOfInvoicesForCurrentMonth(String role);
 
     // Faire le compte des factures pour le mois et l'année que l'utilisateur veut
-    @Query(value = "SELECT COUNT(f) FROM Fee f JOIN f.operator o WHERE MONTH(f.periodFee) = :month AND YEAR(f.periodFee) = :year AND o.label = :role ")
+    @Query(value = "SELECT COUNT(f) FROM Fee f JOIN f.operator o WHERE MONTH(f.periodFee) = :month AND YEAR(f.periodFee) = :year AND o.label = :role AND f.feeStatus = true ")
     Long getNumberOfInvoicesForMonthAndYear(int month, int year, String role);
 
     // Faire le listing des factures
@@ -219,6 +219,12 @@ public interface FeeRepository extends JpaRepository<Fee, Long> {
                     "JOIN f.operator o " +
                     "WHERE o.label = :role AND f.feeStatus = FALSE")
     Page<Map<String, Object>> getAllFeeStatusFalseByOperator(String role, Pageable pageable);
+
+    @Query("SELECT COUNT(f) " +
+            "FROM Fee f " +
+            "JOIN f.operator o " +
+            "WHERE o.label = :role AND f.feeStatus = FALSE")
+    Long numberOfAvailableBills(String role);
 
 
     // nombre de facture payées pour le facturier
@@ -309,8 +315,79 @@ public interface FeeRepository extends JpaRepository<Fee, Long> {
     @Query(value = "SELECT f FROM Fee f WHERE f.feeStatus = true AND MONTH(f.limitDate) = MONTH(CURRENT_DATE) ",
             countQuery = "SELECT COUNT(f) FROM Fee f WHERE f.feeStatus = true AND MONTH(f.limitDate) = MONTH(CURRENT_DATE)")
     Page<Fee> listOfFeePaidPerMonth(Pageable pageable);
+
     // nombre de factures non payées par mois
     @Query("SELECT COUNT(f) FROM Fee f WHERE f.feeStatus = true AND MONTH(f.limitDate) < MONTH(CURRENT_DATE()) ")
     Long numberOfFeePaidPerMonth();
+
+    // -----------------------------------------------------------------------------------------
+
+    @Query("SELECT COUNT(f) FROM Fee f WHERE f.feeStatus = false AND f.operator.label =:role ")
+    Long numberOfPendingBillsPerOperator(String role);
+
+    @Query("SELECT COUNT(f) FROM Fee f WHERE f.feeStatus = true AND f.operator.label =:role ")
+    Long numberOfPaidBillsPerOperator(String role);
+
+    @Query("SELECT COALESCE(SUM(f.price), 0) FROM Fee f WHERE MONTH(f.periodFee) = MONTH(CURRENT_DATE) AND YEAR(f.periodFee) = YEAR(CURRENT_DATE) AND f.operator.label =:role ")
+    Long billsAmountPerMonth(String role);
+
+    @Query(value = "SELECT f.feeId AS feeId, f.periodFee AS periodFee, f.limitDate AS limitDate, f.price AS price, " +
+            " f.phone AS phone, f.debtor AS debtor, f.paymentDate AS paymentDate, f.operator.name AS name , f.operator.label AS label," +
+            " f.operator.id AS idPicture, f.numberBill AS numberBill FROM Fee f WHERE f.operator.label =:role")
+    Page<Map<String, Object>> findAllBillsPerOperator(String role, Pageable pageable);
+
+    @Query("SELECT COUNT(f) FROM Fee f WHERE f.operator.label =:role ")
+    Long numberOfBillsAddingPerOperator(String role);
+
+    @Query("SELECT COALESCE(SUM(f.price), 0) FROM Fee f WHERE f.feeStatus = true AND MONTH(f.paymentDate) = MONTH(CURRENT_DATE()) AND YEAR(f.paymentDate) = YEAR(CURRENT_DATE()) AND f.operator.label =:role")
+    Long numberOfPaidBillsPerOperatorPerMonth(String role);
+
+    @Query("SELECT COALESCE(SUM(f.price), 0) FROM Fee f WHERE f.feeStatus = true AND YEAR(f.paymentDate) = YEAR(CURRENT_DATE()) AND f.operator.label =:role")
+    Long numberOfPaidBillsPerOperatorPerYear(String role);
+
+    //---------------------------------------------------------------------------------------
+
+    @Query("SELECT COUNT(f) FROM Fee f WHERE f.feeStatus = true ")
+    Long numberBillsPaid();
+
+    @Query("SELECT COALESCE(SUM(f.price), 0) FROM Fee f WHERE f.feeStatus = true ")
+    Long sumBillsPaid();
+
+    @Query(value = "SELECT f.feeId AS feeId, f.periodFee AS periodFee, f.limitDate AS limitDate, f.price AS price, " +
+            " f.phone AS phone, f.debtor AS debtor, f.paymentDate AS paymentDate, f.operator.name AS name , f.operator.label AS label," +
+            " f.operator.id AS idPicture, f.numberBill AS numberBill FROM Fee f WHERE f.feeStatus = false ")
+    Page<Map<String, Object>> findUnpaidBills(Pageable pageable);
+
+    @Query(value = "SELECT f.feeId AS feeId, f.periodFee AS periodFee, f.limitDate AS limitDate, f.price AS price, " +
+            " f.phone AS phone, f.debtor AS debtor, f.paymentDate AS paymentDate, f.operator.name AS name , f.operator.label AS label," +
+            " f.operator.id AS idPicture, f.numberBill AS numberBill FROM Fee f ")
+    Page<Map<String, Object>> findGeneratedBills(Pageable pageable);
+
+    @Query("SELECT COUNT(f) FROM Fee f ")
+    Long numberGeneratedBills();
+
+    @Query("SELECT COUNT(f) FROM Fee f WHERE f.feeStatus = false ")
+    Long numberOfUnpaidBills();
+
+    @Query("SELECT COALESCE(SUM(f.price), 0) FROM Fee f WHERE f.feeStatus = true AND YEAR(f.paymentDate) = YEAR(CURRENT_DATE()) ")
+    Long sumBillsPaidPerYear();
+
+    @Query("SELECT COALESCE(SUM(f.price), 0) FROM Fee f WHERE f.feeStatus = true AND MONTH(f.paymentDate) = MONTH(CURRENT_DATE()) AND YEAR(f.paymentDate) = YEAR(CURRENT_DATE()) ")
+    Long sumBillsPaidPerMonth();
+
+
+    @Query("SELECT MONTH(f.paymentDate) AS mois, SUM(CASE WHEN f.feeStatus = true THEN f.price ELSE 0 END) AS sommeFacturesPayees " +
+            "FROM Fee f " +
+            "WHERE YEAR(f.paymentDate) = YEAR(CURRENT_DATE) " +
+            "GROUP BY MONTH(f.paymentDate) " +
+            "ORDER BY MONTH(f.paymentDate) ")
+    List<String> sumInvoicesPaidPerMonthOfTheCurrentYear();
+
+    @Query("SELECT MONTH(f.paymentDate) AS mois, SUM(CASE WHEN f.feeStatus = true THEN f.price ELSE 0 END) AS sommeFacturesPayees " +
+            "FROM Fee f " +
+            "WHERE YEAR(f.paymentDate) = YEAR(CURRENT_DATE) AND f.operator.label =:role " +
+            "GROUP BY MONTH(f.paymentDate) " +
+            "ORDER BY MONTH(f.paymentDate) ")
+    List<String> sumInvoicesPaidPerMonthOfTheCurrentYearPerOperator(String role);
 
 }

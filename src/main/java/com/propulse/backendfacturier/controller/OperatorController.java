@@ -3,6 +3,7 @@ package com.propulse.backendfacturier.controller;
 import com.propulse.backendfacturier.entity.Country;
 import com.propulse.backendfacturier.entity.Operator;
 import com.propulse.backendfacturier.repository.OperatorRepository;
+import com.propulse.backendfacturier.requestEntity.OperatorRequest;
 import com.propulse.backendfacturier.service.CountryService;
 import com.propulse.backendfacturier.service.OperatorService;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
@@ -39,15 +40,14 @@ public class OperatorController {
     public Page<Map<String, Object>> getAllOperators(Pageable pageable){
         return operatorService.getAllOperators(pageable);
     }
-    @PreAuthorize("hasAuthority('User')")
+    //@PreAuthorize("hasAuthority('Admin')")
     @PostMapping("/add-new")
     public Map<String, Object> createOperator(
             @RequestParam("file") MultipartFile file,
-            @RequestParam("label")String label,
-            @RequestParam("name")String name
+            @RequestBody OperatorRequest operatorRequest
     ) throws IOException {
 
-        operatorService.createOperator(file, label, name);
+        operatorService.createOperator(file, operatorRequest.getLabel(), operatorRequest.getName());
 
         Map<String, Object> response = new HashMap<>();
         response.put("status", "success");
@@ -89,6 +89,11 @@ public class OperatorController {
     @GetMapping("/numberOfOperatorForOneYear")
     public Long numberOfOperatorForOneYear(@RequestParam("year") int year){
         return operatorService.numberOfOperatorForOneYear(year);
+    }
+
+    @GetMapping("/numberOfOperator")
+    public Long numberOfOperator(){
+        return operatorService.numberOfOperator();
     }
 
 }

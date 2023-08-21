@@ -213,6 +213,10 @@ public class FeeService {
         return feeRepository.getAllFeeStatusFalseByOperator(role, pageable);
     }
 
+    public Long numberOfAvailableBills(String role){
+        return feeRepository.numberOfAvailableBills(role);
+    }
+
     public Page<Map<String, Object>> getAllFeeStatusTrueByOperator(String role, Pageable pageable) {
         return feeRepository.getAllFeeStatusTrueByOperator(role, pageable);
     }
@@ -441,5 +445,76 @@ public class FeeService {
 
         return true;
     }
+
+
+    public Long numberOfPendingBillsPerOperator(@RequestParam("role") String role){
+        return feeRepository.numberOfPendingBillsPerOperator(role);
+    }
+
+    public Long numberOfPaidBillsPerOperator(@RequestParam("role") String role){
+        return feeRepository.numberOfPaidBillsPerOperator(role);
+    }
+
+    public Long billsAmountPerMonth(@RequestParam("role") String role ){
+        return feeRepository.billsAmountPerMonth(role);
+    }
+
+    public Page<Map<String, Object>> findAllBillsPerOperator(@RequestParam("role") String role, Pageable pageable) {
+        return feeRepository.findAllBillsPerOperator(role, pageable);
+    }
+
+    public Long numberOfBillsAddingPerOperator(@RequestParam("role") String role ){
+        return feeRepository.numberOfBillsAddingPerOperator(role);
+    }
+
+    public Long numberOfPaidBillsPerOperatorPerMonth(@RequestParam("role") String role ){
+        return feeRepository.numberOfPaidBillsPerOperatorPerMonth(role);
+    }
+
+    public Long numberOfPaidBillsPerOperatorPerYear(@RequestParam("role") String role ){
+        return feeRepository.numberOfPaidBillsPerOperatorPerYear(role);
+    }
+
+    //---------------------------------------------------------------------------------------
+    public Long numberBillsPaid(){
+        return feeRepository.numberBillsPaid();
+    }
+
+    public Long sumBillsPaid(){
+        return feeRepository.sumBillsPaid();
+    }
+
+    public Page<Map<String, Object>> findUnpaidBills(Pageable pageable) {
+        return feeRepository.findUnpaidBills(pageable);
+    }
+
+    public Page<Map<String, Object>> findGeneratedBills(Pageable pageable) {
+        return feeRepository.findGeneratedBills(pageable);
+    }
+
+    public Long numberGeneratedBills(){
+        return feeRepository.numberGeneratedBills();
+    }
+
+    public Long numberOfUnpaidBills(){
+        return feeRepository.numberOfUnpaidBills();
+    }
+
+    public Long sumBillsPaidPerYear(){
+        return feeRepository.sumBillsPaidPerYear();
+    }
+
+    public Long sumBillsPaidPerMonth(){
+        return feeRepository.sumBillsPaidPerMonth();
+    }
+
+    public List<String> sumInvoicesPaidPerMonthOfTheCurrentYear(){
+        return feeRepository.sumInvoicesPaidPerMonthOfTheCurrentYear();
+    }
+
+    public List<String> sumInvoicesPaidPerMonthOfTheCurrentYearPerOperator(String role){
+        return feeRepository.sumInvoicesPaidPerMonthOfTheCurrentYearPerOperator(role);
+    }
+
 
 }

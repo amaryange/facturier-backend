@@ -21,4 +21,7 @@ public interface OperatorRepository extends JpaRepository<Operator, Long> {
     @Query("SELECT COUNT(o) FROM Operator o WHERE YEAR(o.dateAdded) = :year ")
     Long numberOfOperatorForOneYear(int year);
 
+    @Query("SELECT COUNT(o) FROM Operator o ")
+    Long numberOfOperator();
+
 }

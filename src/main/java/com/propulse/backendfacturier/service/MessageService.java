@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -20,6 +21,7 @@ public class MessageService {
     public Message sendMessage(Message message){
         return messageRepository.save(message);
     }
+
     public List<Message> getAllMessageSender(String sender){
         return messageRepository.findMessageBySenderEmail(sender);
     }
@@ -30,6 +32,18 @@ public class MessageService {
 
     public List<Message> findSenderAndReceiptEmails(String sender, String receipt){
         return messageRepository.findSenderAndReceiptEmails(sender, receipt);
+    }
+
+    public Long totalMessagePerYear() {
+        return messageRepository.totalMessagePerYear();
+    }
+
+    public Long totalMessagePerMonth() {
+        return messageRepository.totalMessagePerMonth();
+    }
+
+    public List<String> findUserDiscussAdmin(String adminMail){
+        return messageRepository.findUserDiscussAdmin(adminMail);
     }
 
 }

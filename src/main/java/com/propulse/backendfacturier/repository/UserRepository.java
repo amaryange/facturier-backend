@@ -87,5 +87,20 @@ public interface UserRepository extends JpaRepository<User, Long> {
             nativeQuery = true)
     Page<Object[]> listOfUsersOperator(Pageable pageable);
 
+    @Query(value = "SELECT COUNT(u) FROM User u JOIN u.roles r WHERE r.name = 'User'")
+    Long numberOfPayingUsers();
+
+    @Query("SELECT COUNT(u) FROM User u WHERE u.active = true ")
+    Long numberOfActivatedUser();
+
+    @Query("SELECT COUNT(u) FROM User u WHERE u.active = false ")
+    Long numberOfInactivatedUser();
+
+    @Query("SELECT COUNT(u) FROM User u ")
+    Long numberOfUser();
+
+    @Query("SELECT u.lastname AS lastname , u.firstname AS firstname , u.email AS email , u.phone AS phone, u.street AS street, r.name AS roleName FROM User u JOIN u.roles r WHERE r.name = 'User' ")
+    Page<Map<String, Object>> listOfCustomer(Pageable pageable);
+
 
 }

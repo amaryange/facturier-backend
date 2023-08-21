@@ -377,7 +377,11 @@ public class UserController {
      */
 
     @GetMapping("/listOfActivedUser")
-    public ResponseEntity<Page<Map<String, Object>>> listOfActivedUser(Pageable pageable) {
+    public ResponseEntity<Page<Map<String, Object>>> listOfActivedUser(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
         Page<Map<String, Object>> usersPage = userService.listOfActivedUser(pageable);
         return ResponseEntity.ok(usersPage);
     }
@@ -409,6 +413,37 @@ public class UserController {
     public ResponseEntity<Page<Object[]>> getOperatorUsers(Pageable pageable) {
         Page<Object[]> usersPage = userService.listOfUsersOperator(pageable);
         return ResponseEntity.ok(usersPage);
+    }
+
+    @GetMapping("/numberOfPayingUsers")
+    public Long numberOfPayingUsers(){
+        return userService.numberOfPayingUsers();
+    }
+
+    @GetMapping("/numberOfActivatedUser")
+    public Long numberOfActivatedUser(){
+        return userService.numberOfActivatedUser();
+    }
+
+    @GetMapping("/numberOfInactivatedUser")
+    public Long numberOfInactivatedUser(){
+        return userService.numberOfInactivatedUser();
+    }
+
+    @GetMapping("/numberOfUser")
+    public Long numberOfUser(){
+        return userService.numberOfUser();
+    }
+
+
+    @GetMapping("/listOfCustomer")
+    public ResponseEntity<Page<Map<String, Object>>> listOfCustomer(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Map<String, Object>> feePage = userService.listOfCustomer(pageable);
+        return ResponseEntity.ok(feePage);
     }
 
     @GetMapping("/refresh-token")

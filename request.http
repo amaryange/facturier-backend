@@ -149,16 +149,62 @@ GET http://localhost:8082/fee/getNumberOfInvoicesForCurrentMonth?role=CIE
 GET http://localhost:8082/fee/getNumberOfInvoicesForMonthAndYear?month=4&year=2023&role=CIE
 
 ### nombre des factures en attentes de payement
-GET http://localhost:8082/fee/getAllFeeStatusFalseByOperator?role=SODECI&page=0&size=10
+GET http://localhost:8082/fee/numberOfAvailableBills?role=SODECI
+### http://localhost:8082/fee/getAllFeeStatusFalseByOperator?role=SODECI&page=0&size=10
 
 ### liste des factures payées pour le facturier connecté
 GET http://localhost:8082/fee/getAllFeeStatusTrueByOperator?role=SODECI&page=0&size=10
 
 ### liste des factures chargées
-GET http://localhost:8082/fee/findAllBills
+GET http://localhost:8082/fee/findAllBillsPerOperator?role=CIE&page=0&size=10
 
 ### chargement de factures par le facturier (fichier excel)
+### tu utilises formaData aussi file est la seule donnée à inserer
 POST http://localhost:8082/fee/uploadInvoices?file=factures.xlsx
+
+### Facture en attente (nombre)
+GET http://localhost:8082/fee/numberOfPendingBillsPerOperator?role=SODECI
+
+### Factures payées (nombre)
+GET http://localhost:8082/fee/numberOfPaidBillsPerOperator?role=SODECI
+
+### Montant des factures (mensuel)
+GET http://localhost:8082/fee/billsAmountPerMonth?role=SODECI
+
+### Factures ajoutées (liste)
+GET http://localhost:8082/fee/findAllBillsPerOperator?role=SODECI
+
+### Liste des operations (Liste des factures payées)
+GET http://localhost:8082/fee/getAllFeeStatusTrueByOperator?role=SODECI&page=0&size=10
+
+### Importer les factures via fichiers excel
+POST http://localhost:8082/fee/uploadInvoices?file=factures.xlsx
+
+### Factures ajoutée (nombre)
+GET http://localhost:8082/fee/numberOfBillsAddingPerOperator?role=SODECI
+
+### Factures en attente (nombre)
+GET http://localhost:8082/fee/numberOfPendingBillsPerOperator?role=SODECI
+
+### Factures payées (nombre)
+GET http://localhost:8082/fee/numberOfPaidBillsPerOperator?role=SODECI
+
+### Factures impayées (nombre)
+GET http://localhost:8082/fee/numberOfPendingBillsPerOperator?role=SODECI
+
+### Ventes réalisées (total) un an
+GET http://localhost:8082/fee/numberOfPaidBillsPerOperatorPerYear?role=SODECI
+
+### Chiffres d'affaires (total) un an
+GET http://localhost:8082/fee/numberOfPaidBillsPerOperatorPerYear?role=SODECI
+
+### Bénéfice réalisées (total) un an
+GET http://localhost:8082/fee/numberOfPaidBillsPerOperatorPerYear?role=SODECI
+
+
+### Statistique
+GET http://localhost:8082/fee/sumInvoicesPaidPerMonthOfTheCurrentYearPerOperator?role=SODECI
+
 
 ### --- ESPACE ADMIN ---
 
@@ -178,7 +224,129 @@ Content-Type: application/json
 }
 
 ###--------------------------------
+
+### liste operateur
 GET http://localhost:8082/operator/all
+
+### Nombre de facturier ( nombre total de facture)
+GET http://localhost:8082/operator/numberOfOperator
+
+### Nombre de client (nombre total utilisateurs payeur )
+GET http://localhost:8082/user/numberOfPayingUsers
+
+### Factures payées ( nombre facture payée )
+GET http://localhost:8082/fee/numberBillsPaid
+
+### Montant factures ( somme des factures payées )
+GET http://localhost:8082/fee/sumBillsPaid
+
+### Facture Disponible ( factures disponible ) PAUL
+GET http://localhost:8082/fee/findUnpaidBills?page=0&size=10
+
+### Facture impayées  ( factures impayées ) PAUL
+GET http://localhost:8082/fee/findUnpaidBills?page=0&size=10
+
+### Nombre de factures générée
+GET http://localhost:8082/fee/numberGeneratedBills
+
+### Nombre de factures non payée
+GET http://localhost:8082/fee/numberOfUnpaidBills
+
+### Chiffres d'affaires sur un an
+GET http://localhost:8082/fee/sumBillsPaidPerYear
+
+### Historique (Factures )
+GET http://localhost:8082/fee/findGeneratedBills?page=0&size=10
+
+### Les Facturiers (La liste des facturiers)
+GET http://localhost:8082/operator/all
+
+### Nombres d'annonces réalisées Mensuel
+GET http://localhost:8082/announcement/numberAnnouncementPerMonth
+
+### Nombres d'annonces réalisées Annuel
+GET http://localhost:8082/announcement/numberAnnouncementPerYear
+
+### Listing Annonceurs
+GET http://localhost:8082/announcement/findAll
+
+### Formulaire Annonce (ajout d'une annonce)
+### J'ai pas trouver d'exemple d'ajout avec JSON. tu feras ça avec du formDATA (React) voir fichier exempleFormData.txt
+POST http://localhost:8082/announcement/add-new
+
+### Client actifs (nombre)
+GET http://localhost:8082/user/numberOfActivatedUser
+
+### Client inactifs (nombre)
+GET http://localhost:8082/user/numberOfInactivatedUser
+
+### Client total (nombre)
+GET http://localhost:8082/user/numberOfUser
+
+### Liste des clients
+GET http://localhost:8082/user/listOfCustomer
+
+### Formulaire ajout facturier
+POST http://localhost:8082/user/add-support-or-biller?roleId=2
+Content-Type: application/json
+
+{
+  "firstname": "meless",
+  "lastname": "meless",
+  "email": "meless@mail.com",
+  "phone": "0707359590",
+  "country": 1,
+  "city": 1,
+  "street": "azito",
+  "password":"1234567890"
+}
+
+### Chiffres d'affaires Facturier
+GET http://localhost:8082/fee/sumBillsPaid
+
+### Chiffres d'affaires Mensuelle
+GET http://localhost:8082/fee/sumBillsPaidPerMonth
+
+### Chiffres d'affaires Total
+GET http://localhost:8082/fee/sumBillsPaid
+
+### Performance evolutive
+http://localhost:8082/fee/sumInvoicesPaidPerMonthOfTheCurrentYear
+
+### total Message en attente
+
+### Total message annuel
+GET http://localhost:8082/message/totalMessagePerYear
+
+### Total message mensuel
+GET http://localhost:8082/message/totalMessagePerMonth
+
+### Liste des utilisateurs avec qui l'admin à conversé
+GET http://localhost:8082/message/findUserDiscussAdmin?mail=factSupport0LN@gmail.com
+
+### Liste des messages entre l'admin et un utilisateur
+GET http://localhost:8082/user/messages?sender=admin@mail.com&receipt=user@mail.com
+
+### Compte total (nombre)
+GET http://localhost:8082/user/numberOfUser
+
+### Compte Actif (nombre)
+GET http://localhost:8082/user/numberOfActivatedUser
+
+### Compte inactif (nombre)
+GET http://localhost:8082/user/numberOfInactivatedUser
+
+### Formulaire de creation des rôles
+POST http://localhost:8082/role/addRole
+Content-Type: application/json
+
+{
+  "name":"User-1"
+}
+
+
+
+
 
 
 

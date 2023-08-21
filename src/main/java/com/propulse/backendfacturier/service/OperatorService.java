@@ -85,4 +85,8 @@ public class OperatorService {
         return operatorRepository.numberOfOperatorForOneYear(year);
     }
 
+    public Long numberOfOperator(){
+        return operatorRepository.numberOfOperator();
+    }
+
 }

@@ -256,6 +256,10 @@ public class FeeController {
         Page<Map<String, Object>> feePage = feeService.getAllFeeStatusFalseByOperator(role, pageable);
         return ResponseEntity.ok(feePage);
     }
+    @GetMapping("/numberOfAvailableBills")
+    public Long numberOfAvailableBills(String role){
+        return feeService.numberOfAvailableBills(role);
+    }
 
     @GetMapping("/getAllFeeStatusTrueByOperator")
     public ResponseEntity<Page<Map<String, Object>>> getAllFeeStatusTrueByOperator(
@@ -466,6 +470,148 @@ public class FeeController {
                 .headers(headers)
                 .body(pdfBytes);
     }
+
+    @GetMapping("/numberOfPendingBillsPerOperator")
+    public Long numberOfPendingBillsPerOperator(@RequestParam("role") String role){
+        return feeService.numberOfPendingBillsPerOperator(role);
+    }
+
+    @GetMapping("/numberOfPaidBillsPerOperator")
+    public Long numberOfPaidBillsPerOperator(@RequestParam("role") String role){
+        return feeService.numberOfPaidBillsPerOperator(role);
+    }
+
+    @GetMapping("/billsAmountPerMonth")
+    public Long billsAmountPerMonth(String role){
+        return feeService.billsAmountPerMonth(role);
+    }
+
+    @GetMapping("/findAllBillsPerOperator")
+    public ResponseEntity<Page<Map<String, Object>>> findAllBillsPerOperator(
+            @RequestParam(defaultValue = "role") String role,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Map<String, Object>> feePage = feeService.findAllBillsPerOperator(role, pageable);
+        return ResponseEntity.ok(feePage);
+    }
+
+    @GetMapping("/numberOfBillsAddingPerOperator")
+    public Long numberOfBillsAddingPerOperator(String role){
+        return feeService.numberOfBillsAddingPerOperator(role);
+    }
+
+    @GetMapping("/numberOfPaidBillsPerOperatorPerMonth")
+    public Long numberOfPaidBillsPerOperatorPerMonth(String role){
+        return feeService.numberOfPaidBillsPerOperatorPerMonth(role);
+    }
+
+    @GetMapping("/numberOfPaidBillsPerOperatorPerYear")
+    public Long numberOfPaidBillsPerOperatorPerYear(String role){
+        return feeService.numberOfPaidBillsPerOperatorPerYear(role);
+    }
+
+    //---------------------------------------------------------------------------------------
+
+    @GetMapping("/numberBillsPaid")
+    public Long numberBillsPaid(){
+        return feeService.numberBillsPaid();
+    }
+
+    @GetMapping("/sumBillsPaid")
+    public Long sumBillsPaid(){
+        return feeService.sumBillsPaid();
+    }
+
+    @GetMapping("/findUnpaidBills")
+    public ResponseEntity<Page<Map<String, Object>>> findUnpaidBills(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Map<String, Object>> feePage = feeService.findUnpaidBills(pageable);
+        return ResponseEntity.ok(feePage);
+    }
+
+    @GetMapping("/findGeneratedBills")
+    public ResponseEntity<Page<Map<String, Object>>> findGeneratedBills(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Map<String, Object>> feePage = feeService.findGeneratedBills(pageable);
+        return ResponseEntity.ok(feePage);
+    }
+
+    @GetMapping("/numberGeneratedBills")
+    public Long numberGeneratedBills(){
+        return feeService.numberGeneratedBills();
+    }
+
+    @GetMapping("/numberOfUnpaidBills")
+    public Long numberOfUnpaidBills(){
+        return feeService.numberOfUnpaidBills();
+    }
+
+    @GetMapping("/sumBillsPaidPerYear")
+    public Long sumBillsPaidPerYear(){
+        return feeService.sumBillsPaidPerYear();
+    }
+
+    @GetMapping("/sumBillsPaidPerMonth")
+    public Long sumBillsPaidPerMonth(){
+        return feeService.sumBillsPaidPerMonth();
+    }
+
+    /*
+
+    @GetMapping("/sumInvoicesPaidPerMonthOfTheCurrentYear")
+    public List<String> sumInvoicesPaidPerMonthOfTheCurrentYear(){
+        return feeService.sumInvoicesPaidPerMonthOfTheCurrentYear();
+    }
+
+
+    @GetMapping("/sumInvoicesPaidPerMonthOfTheCurrentYearPerOperator")
+    public List<String> sumInvoicesPaidPerMonthOfTheCurrentYearPerOperator(String role){
+        return feeService.sumInvoicesPaidPerMonthOfTheCurrentYearPerOperator(role);
+    }
+
+     */
+
+    @GetMapping("/sumInvoicesPaidPerMonthOfTheCurrentYear")
+    public List<Map<String, Object>> sumInvoicesPaidPerMonthOfTheCurrentYear(){
+
+        List<String> money = feeService.sumInvoicesPaidPerMonthOfTheCurrentYear();
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        for (String user : money) {
+            String[] values = user.split(",");
+            Map<String, Object> map = new HashMap<>();
+            map.put("moisId", values[0]);
+            map.put("sumBills", values[1]);
+            result.add(map);
+        }
+
+        return result;
+
+    }
+
+    @GetMapping("/sumInvoicesPaidPerMonthOfTheCurrentYearPerOperator")
+    public List<Map<String, Object>> sumInvoicesPaidPerMonthOfTheCurrentYearPerOperator(String role){
+
+        List<String> money = feeService.sumInvoicesPaidPerMonthOfTheCurrentYearPerOperator(role);
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        for (String user : money) {
+            String[] values = user.split(",");
+            Map<String, Object> map = new HashMap<>();
+            map.put("moisId", values[0]);
+            map.put("sumBills", values[1]);
+            result.add(map);
+        }
+
+        return result;
+
+    }
+
 
 
 

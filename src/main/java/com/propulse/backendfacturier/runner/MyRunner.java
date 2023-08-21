@@ -193,7 +193,7 @@ public class MyRunner implements CommandLineRunner {
         // Ajouter les informations des opérateurs avec leurs images correspondantes
         operators.add(new OperatorDTO("cie.png", "Compagnie Ivoirienne d'électricité", "CIE"));
         operators.add(new OperatorDTO("sodeci.png", "Société de distribution d'eau en Côte d'Ivoire", "SODECI"));
-        operators.add(new OperatorDTO("canal.png", "CANAL", "CANAL+"));
+        operators.add(new OperatorDTO("canal.png", "CANAL", "CANAL"));
         operators.add(new OperatorDTO("startimes.png", "STARTIMES", "STARTIMES"));
         operators.add(new OperatorDTO("orange.png", "Orange", "Orange"));
 
